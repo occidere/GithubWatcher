@@ -7,6 +7,8 @@ import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties}
 import org.occidere.githubwatcher.logger.GithubWatcherLogger
 import org.occidere.githubwatcher.vo._
 
+import scala.util.Try
+
 /**
  * @author occidere
  * @Blog: https://occidere.blog.me
@@ -24,10 +26,12 @@ object ElasticService extends GithubWatcherLogger {
 
   import com.sksamuel.elastic4s.ElasticDsl._
 
-  def findUserByLogin(login: String): User = MAPPER.convertValue(
-    client.execute {
-      search(GITHUB_USERS).bool(boolQuery().filter(query(s"login:$login"))).limit(1)
-    }.await.result.hits.hits.head.sourceAsMap, classOf[User])
+  def findUserByLogin(login: String): User = Try(
+    MAPPER.convertValue(
+      client.execute {
+        search(GITHUB_USERS).bool(boolQuery().filter(query(s"login:$login"))).limit(1)
+      }.await.result.hits.hits.head.sourceAsMap, classOf[User])
+  ).getOrElse(User())
 
   def saveUser(user: User): Unit = client.execute {
     indexInto(GITHUB_USERS)
@@ -36,11 +40,11 @@ object ElasticService extends GithubWatcherLogger {
       .refreshImmediately
   }.await
 
-  def findAllReposByOwnerLogin(ownerLogin: String): Iterable[Repository] = client.execute {
+  def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = client.execute {
     search(GITHUB_REPOS).bool(boolQuery().filter(query(s"ownerLogin:$ownerLogin")))
-  }.await.result.hits.hits.map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Repository]))
+  }.await.result.hits.hits.map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Repository])).toList
 
-  def saveAllRepos(repos: Iterable[Repository]): Unit = client.execute {
+  def saveAllRepos(repos: List[Repository]): Unit = client.execute {
     bulk(repos
       .map(MAPPER.convertValue(_, classOf[Map[String, Any]]))
       .map(repoMap => indexInto(GITHUB_REPOS)

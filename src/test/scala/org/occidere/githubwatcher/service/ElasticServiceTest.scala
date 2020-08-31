@@ -21,8 +21,8 @@ class ElasticServiceTest extends AnyFlatSpec with should.Matchers {
     println(user)
   }
 
-  "findUserByLogin(!@#$)" should "throw Exception" in {
-    an[NoSuchElementException] should be thrownBy elasticService.findUserByLogin("!@#$")
+  "findUserByLogin(!@#$)" should "return Empty User" in {
+    elasticService.findUserByLogin("!@#$") shouldBe a[User]
   }
 
   "saveUser(test)" should "save name to TEST" in {
@@ -53,7 +53,7 @@ class ElasticServiceTest extends AnyFlatSpec with should.Matchers {
       ownerLogin = "test"
     }
 
-    elasticService.saveAllRepos(Iterable(repo1, repo2, repo3))
+    elasticService.saveAllRepos(List(repo1, repo2, repo3))
 
     val repos = elasticService.findAllReposByOwnerLogin("test")
     repos.size should be >= 3
