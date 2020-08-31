@@ -18,30 +18,33 @@ object GithubApiService {
 
   def getUser(login: String): User = MAPPER.convertValue(getBody(s"users/$login"), classOf[User])
 
-  def getFollowerLogins(login: String): Iterable[String] =
-    getBodies(s"users/$login/followers").map(_ ("login").toString)
+  def getFollowerLogins(login: String): List[String] =
+    getBodies(s"users/$login/followers").map(_ ("login").toString).toList
 
-  def getRepositories(login: String): Iterable[Repository] =
-    getBodies(s"users/$login/repos").map(MAPPER.convertValue(_, classOf[Repository]))
+  def getRepositories(login: String): List[Repository] =
+    getBodies(s"users/$login/repos").map(MAPPER.convertValue(_, classOf[Repository])).toList
 
-  def getStargazerLogins(login: String, repo: String): Iterable[String] = getLogins(login, repo)("stargazers")
+  def getStargazerLogins(login: String, repo: String): List[String] =
+    getLogins(login, repo)("stargazers").toList
 
-  def getWatcherLogins(login: String, repo: String): Iterable[String] = getLogins(login, repo)("watchers")
+  def getWatcherLogins(login: String, repo: String): List[String] =
+    getLogins(login, repo)("watchers").toList
 
-  def getForkLogins(login: String, repo: String): Iterable[String] = getLogins(login, repo)("forks")
+  def getForkLogins(login: String, repo: String): List[String] =
+    getLogins(login, repo)("forks").toList
 
-  private def getLogins(login: String, repo: String)(userType: String): Iterable[String] =
-    getBodies(s"repos/$login/$repo/$userType").map(_ ("login").toString)
+  private def getLogins(login: String, repo: String)(userType: String): List[String] =
+    getBodies(s"repos/$login/$repo/$userType").map(_ ("login").toString).toList
 
   private def getBody(url: String): Map[String, Any] = MAPPER.readValue(getResponse(url).body, classOf[Map[String, Any]])
 
-  private def getBodies(url: String): Iterable[Map[String, Any]] = Iterator.from(1)
+  private def getBodies(url: String): List[Map[String, Any]] = Iterator.from(1)
     .map(page => MAPPER.readValue(
       getResponse(s"$url?page=$page").body,
       classOf[List[Map[String, Any]]])
     ).takeWhile(_.nonEmpty)
     .flatten
-    .to(Iterable)
+    .toList
 
   private def getResponse(url: String): HttpResponse[String] = Http(s"https://api.github.com/$url")
     .option(HttpOptions.followRedirects(true))
