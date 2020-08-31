@@ -15,9 +15,9 @@ case class Repository(id: String = "",
                       description: String = "") {
   var ownerId: String = ""
   var ownerLogin: String = ""
-  var forkLogins: Iterable[String] = List()
-  var watcherLogins: Iterable[String] = List()
-  var stargazerLogins: Iterable[String] = List()
+  var forkLogins: List[String] = List()
+  var watcherLogins: List[String] = List()
+  var stargazerLogins: List[String] = List()
 
   @JsonProperty("owner")
   private def unpackOwner(owner: Map[String, Any]): Unit = {

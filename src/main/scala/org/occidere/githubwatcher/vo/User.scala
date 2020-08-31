@@ -20,6 +20,6 @@ case class User(id: Long = -1L,
                 bio: String = "",
                 @JsonProperty("avatar_url") var avatarUrl: String = "",
                 @JsonProperty("html_url") var htmlUrl: String = "") {
-  var followerLogins: Iterable[String] = List[String]()
-  var repositories: Iterable[Repository] = List[Repository]()
+  var followerLogins: List[String] = List[String]()
+  var repositories: List[Repository] = List[Repository]()
 }
