@@ -40,9 +40,11 @@ object ElasticService extends GithubWatcherLogger {
       .refreshImmediately
   }.await
 
-  def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = client.execute {
-    search(GITHUB_REPOS).bool(boolQuery().filter(query(s"ownerLogin:$ownerLogin")))
-  }.await.result.hits.hits.map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Repository])).toList
+  def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = Try(
+    client.execute {
+      search(GITHUB_REPOS).bool(boolQuery().filter(query(s"ownerLogin:$ownerLogin")))
+    }.await.result.hits.hits.map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Repository])).toList
+  ).getOrElse(List())
 
   def saveAllRepos(repos: List[Repository]): Unit = client.execute {
     bulk(repos
