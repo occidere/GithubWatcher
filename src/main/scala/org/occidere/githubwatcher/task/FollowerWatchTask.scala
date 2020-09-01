@@ -36,7 +36,6 @@ object FollowerWatchTask extends GithubWatcherLogger {
 
     // Update DB to latest data including repos
     latestUser.followerLogins = newFollowerLogins ++ notChangedFollowerLogins
-    latestUser.repositories = prevUser.repositories
     ElasticService saveUser latestUser
     logger.info(s"Task finished ($userId)")
   }

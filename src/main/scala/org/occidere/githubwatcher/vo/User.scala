@@ -21,5 +21,4 @@ case class User(id: Long = -1L,
                 @JsonProperty("avatar_url") var avatarUrl: String = "",
                 @JsonProperty("html_url") var htmlUrl: String = "") {
   var followerLogins: List[String] = List[String]()
-  var repositories: List[Repository] = List[Repository]()
 }
