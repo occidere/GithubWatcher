@@ -51,6 +51,7 @@ object GithubApiService {
     .headers(
       Seq(
         ("User-Agent", "Mozilla/5.0"),
+        ("Accept", "application/vnd.github.v3+json"),
         ("Authorization", if (TOKEN.nonEmpty) s"Bearer $TOKEN" else "")
       ).filter(_._2.nonEmpty)
     ).asString
