@@ -1,5 +1,7 @@
 package org.occidere.githubwatcher.service
 
+import org.occidere.githubwatcher.util.MessageBuilderUtils
+import org.occidere.githubwatcher.vo.{Repository, RepositoryDiff}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
@@ -11,7 +13,20 @@ import org.scalatest.matchers.should
  */
 class LineMessengerServiceTest extends AnyFlatSpec with should.Matchers {
 
-  "createFollowerMessage" should "create new follower message" in {
-  }
+  "Message formatting test" should "Always success" in {
+    val prevRepo = new Repository("1", "test1", "desc1") {
+      stargazerLogins = List("a", "b")
+      forkLogins = List("a", "b")
+      watcherLogins = List("a", "b")
+    }
 
+    val latestRepo = new Repository("1", "test1", "desc1") {
+      stargazerLogins = List("b", "c")
+      forkLogins = List("b", "c")
+      watcherLogins = List("b", "c")
+    }
+
+    val msg = MessageBuilderUtils.createRepositoryMessage(RepositoryDiff(prevRepo, latestRepo))
+    println(msg)
+  }
 }
