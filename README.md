@@ -3,7 +3,8 @@
 [![HitCount](http://hits.dwyl.io/occidere/GithubWatcher.svg)](http://hits.dwyl.io/occidere/GithubWatcher)
 <img src="https://img.shields.io/github/languages/top/occidere/GithubWatcher"/>
 <img src="https://img.shields.io/github/issues/occidere/GithubWatcher"/>
-[![Scala Version](https://img.shields.io/badge/Scala-2.13-red.svg)](https://www.java.com/ko/)
+[![Java Version](https://img.shields.io/badge/java-1.8+-orange.svg)](https://www.java.com/ko/)
+[![Scala Version](https://img.shields.io/badge/Scala-2.13-red.svg)](https://www.scala-lang.org/download/)
 [![GitHub license](https://img.shields.io/github/license/occidere/GithubWatcher.svg)](https://github.com/occidere/GithubWatcher/blob/master/LICENSE)
 
 Integrated GitHub Activity Notification System.
