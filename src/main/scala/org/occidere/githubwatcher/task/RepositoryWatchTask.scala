@@ -2,7 +2,9 @@ package org.occidere.githubwatcher.task
 
 import org.occidere.githubwatcher.logger.GithubWatcherLogger
 import org.occidere.githubwatcher.service._
-import org.occidere.githubwatcher.vo.Repository
+import org.occidere.githubwatcher.vo.{Repository, RepositoryDiff}
+
+import scala.util.{Failure, Success, Try}
 
 /**
  * @author occidere
@@ -26,32 +28,23 @@ object RepositoryWatchTask extends GithubWatcherLogger {
     logger.info(s"The number of repos from API: ${latestRepos.size}")
 
     // Prev repos from ES
-    val prevRepos: Map[String, Repository] = ElasticService.findAllReposByOwnerLogin(userId)
-      .groupMapReduce(_.id)(_)
+    val prevRepos: Map[String, Repository] = ElasticService.findAllReposByOwnerLogin(userId).groupMapReduce(_.id)(repo => repo)((r1, _) => r1)
     logger.info(s"The number of repos from ES: ${prevRepos.size}")
 
-    // DIFF & Send message if changed
-    latestRepos.filter(latestRepo => {
-      val prevRepo = prevRepos(latestRepo.id)
+    // Diff & Send message if changed
+    for (latestRepo <- latestRepos) Try {
+      val prevRepo = prevRepos.getOrElse(latestRepo.id, Repository(latestRepo.id, latestRepo.name, latestRepo.description))
+      val diff = RepositoryDiff(prevRepo, latestRepo)
+      logger.info(s"Repo: ${diff.repoName} (changed: ${diff.hasChanged})")
 
-      val newForkLogins = latestRepo.forkLogins diff prevRepo.forkLogins
-      val newWatcherLogins = latestRepo.watcherLogins diff prevRepo.watcherLogins
-      val newStargazerLogins = latestRepo.stargazerLogins diff prevRepo.stargazerLogins
-      val hasNewChanged = newForkLogins.nonEmpty || newWatcherLogins.nonEmpty || newStargazerLogins.nonEmpty
-
-      val delForkLogins = prevRepo.forkLogins diff latestRepo.forkLogins
-      val delWatcherLogins = prevRepo.watcherLogins diff latestRepo.watcherLogins
-      val delStargazerLogins = prevRepo.stargazerLogins diff latestRepo.stargazerLogins
-      val hasDelChanged = delForkLogins.nonEmpty || delWatcherLogins.nonEmpty || delStargazerLogins.nonEmpty
-
-      logger.info(s"${latestRepo.name} (changed: ${hasNewChanged || hasDelChanged})")
-
-      // TODO: 효율적인 diff 결과 메시지 전송 방법 고려 (파라미터 최소화)
-
-      false
-    })
+      // Send message
+      if (diff.hasChanged) LineMessengerService.sendRepositoryMessage(diff)
+    } match {
+      case Success(_) => logger.info(s"${latestRepo.name} process success")
+      case Failure(exception) => logger.error(s"${latestRepo.name} process failed", exception)
+    }
 
     // Save latest repos
-
+    ElasticService.saveAllRepos(latestRepos)
   }
 }
