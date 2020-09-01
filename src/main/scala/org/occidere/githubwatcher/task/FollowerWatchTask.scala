@@ -2,6 +2,7 @@ package org.occidere.githubwatcher.task
 
 import org.occidere.githubwatcher.logger.GithubWatcherLogger
 import org.occidere.githubwatcher.service.{ElasticService, GithubApiService, LineMessengerService}
+import org.occidere.githubwatcher.vo.FollowerDiff
 
 /**
  * @author occidere
@@ -24,18 +25,16 @@ object FollowerWatchTask extends GithubWatcherLogger {
     logger.info(s"The number of follower stored in DB: ${prevUser.followerLogins.size}")
 
     // Diff
-    val newFollowerLogins: List[String] = latestFollowerLogins diff prevUser.followerLogins
-    logger.info(s"Recently added new followers: ${newFollowerLogins.size}")
-    val deletedFollowerLogins: List[String] = prevUser.followerLogins diff latestFollowerLogins
-    logger.info(s"Recently deleted followers: ${deletedFollowerLogins.size}")
-    val notChangedFollowerLogins: List[String] = prevUser.followerLogins intersect latestFollowerLogins
-    logger.info(s"Not changed followers: ${notChangedFollowerLogins.size}")
+    val diff = FollowerDiff(prevUser.followerLogins, latestFollowerLogins)
+    logger.info(s"Recently added new followers: ${diff.newFollowerLogins.size}")
+    logger.info(s"Recently deleted followers: ${diff.deletedFollowerLogins.size}")
+    logger.info(s"Not changed followers: ${diff.notChangedFollowerLogins.size}")
 
     // Send line message if follower changed
-    LineMessengerService.sendFollowerMessageIfExist(newFollowerLogins, deletedFollowerLogins)
+    if (diff.hasChanged) LineMessengerService.sendFollowerMessage(diff)
 
     // Update DB to latest data including repos
-    latestUser.followerLogins = newFollowerLogins ++ notChangedFollowerLogins
+    latestUser.followerLogins = diff.newFollowerLogins ++ diff.notChangedFollowerLogins
     ElasticService saveUser latestUser
     logger.info(s"Task finished ($userId)")
   }
