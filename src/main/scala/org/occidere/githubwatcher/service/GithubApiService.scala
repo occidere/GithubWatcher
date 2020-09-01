@@ -18,23 +18,21 @@ object GithubApiService {
 
   def getUser(login: String): User = MAPPER.convertValue(getBody(s"users/$login"), classOf[User])
 
-  def getFollowerLogins(login: String): List[String] =
-    getBodies(s"users/$login/followers").map(_ ("login").toString)
+  def getFollowerLogins(login: String): List[String] = getBodies(s"users/$login/followers")
+    .map(_.getOrElse("login", "").toString)
+    .filter(_.nonEmpty)
 
-  def getRepositories(login: String): List[Repository] =
-    getBodies(s"users/$login/repos").map(MAPPER.convertValue(_, classOf[Repository]))
+  def getRepositories(login: String): List[Repository] = getBodies(s"users/$login/repos").map(MAPPER.convertValue(_, classOf[Repository]))
 
-  def getStargazerLogins(login: String, repo: String): List[String] =
-    getLogins(login, repo)("stargazers")
+  def getStargazerLogins(login: String, repo: String): List[String] = getLogins(login, repo)("stargazers")
 
-  def getWatcherLogins(login: String, repo: String): List[String] =
-    getLogins(login, repo)("watchers")
+  def getWatcherLogins(login: String, repo: String): List[String] = getLogins(login, repo)("watchers")
 
-  def getForkLogins(login: String, repo: String): List[String] =
-    getLogins(login, repo)("forks")
+  def getForkLogins(login: String, repo: String): List[String] = getLogins(login, repo)("forks")
 
-  private def getLogins(login: String, repo: String)(userType: String): List[String] =
-    getBodies(s"repos/$login/$repo/$userType").map(_ ("login").toString)
+  private def getLogins(login: String, repo: String)(userType: String): List[String] = getBodies(s"repos/$login/$repo/$userType")
+    .map(_.getOrElse("login", "").toString)
+    .filter(_.nonEmpty)
 
   private def getBody(url: String): Map[String, Any] = MAPPER.readValue(getResponse(url).body, classOf[Map[String, Any]])
 
