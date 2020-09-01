@@ -40,9 +40,9 @@ object ElasticService extends GithubWatcherLogger {
       .refreshImmediately
   }.await
 
-  def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = Try(
+  def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = Try( // TODO: Scroll API 적용
     client.execute {
-      search(GITHUB_REPOS).bool(boolQuery().filter(query(s"ownerLogin:$ownerLogin")))
+      search(GITHUB_REPOS).size(1000).bool(boolQuery().filter(query(s"ownerLogin:$ownerLogin")))
     }.await.result.hits.hits.map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Repository])).toList
   ).getOrElse(List())
 
