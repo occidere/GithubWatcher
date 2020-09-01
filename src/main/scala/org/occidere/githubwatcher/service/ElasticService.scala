@@ -29,7 +29,7 @@ object ElasticService extends GithubWatcherLogger {
   def findUserByLogin(login: String): User = Try(
     MAPPER.convertValue(
       client.execute {
-        search(GITHUB_USERS).bool(boolQuery().filter(query(s"login:$login"))).limit(1)
+        search(GITHUB_USERS).bool(boolQuery().filter(query(s"login.keyword:$login"))).limit(1)
       }.await.result.hits.hits.head.sourceAsMap, classOf[User])
   ).getOrElse(User())
 
@@ -42,7 +42,7 @@ object ElasticService extends GithubWatcherLogger {
 
   def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = Try( // TODO: Scroll API 적용
     client.execute {
-      search(GITHUB_REPOS).size(1000).bool(boolQuery().filter(query(s"ownerLogin:$ownerLogin")))
+      search(GITHUB_REPOS).size(1000).bool(boolQuery().filter(query(s"ownerLogin.keyword:$ownerLogin")))
     }.await.result.hits.hits.map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Repository])).toList
   ).getOrElse(List())
 
