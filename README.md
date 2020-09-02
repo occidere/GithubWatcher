@@ -1,6 +1,6 @@
 # GithubWatcher
 
-[![HitCount](http://hits.dwyl.io/occidere/GithubWatcher.svg)](http://hits.dwyl.io/occidere/GithubWatcher)
+[![HitCount](http://hits.dwyl.com/occidere/GithubWatcher.svg)](http://hits.dwyl.com/occidere/GithubWatcher)
 <img src="https://img.shields.io/github/languages/top/occidere/GithubWatcher"/>
 <img src="https://img.shields.io/github/issues/occidere/GithubWatcher"/>
 [![Java Version](https://img.shields.io/badge/java-1.8+-orange.svg)](https://www.java.com/ko/)
