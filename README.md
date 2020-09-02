@@ -9,6 +9,8 @@
 
 Integrated GitHub Activity Notification System.
 
+<br>
+
 ## Features
 ### 1. Follower change notification
 Notify follower increase / decrease.
