@@ -3,6 +3,8 @@ package org.occidere.githubwatcher.logger
 import org.slf4j
 import org.slf4j.LoggerFactory
 
+import scala.language.implicitConversions
+
 /**
  * @author occidere
  * @Blog: https://occidere.blog.me

@@ -22,15 +22,15 @@ object MessageBuilderUtils {
   def createRepositoryMessage(diff: RepositoryDiff): String =
     s"""[${diff.repoName}] ${
       if (diff.hasNewChanged) "\n[NEW]" +
-        s"${if (diff.newStargazerLogins.isEmpty) "" else s"\n- STAR(${diff.newStargazerLogins.size})\n${prettyLoginList(diff.newStargazerLogins)}"}" +
-        s"${if (diff.newForkLogins.isEmpty) "" else s"\n- FORK(${diff.newForkLogins.size})\n${prettyLoginList(diff.newForkLogins)}"}" +
-        s"${if (diff.newWatcherLogins.isEmpty) "" else s"\n- WATCH(${diff.newWatcherLogins.size})\n${prettyLoginList(diff.newWatcherLogins)}"}"
+        s"${if (diff.newStargazerLogins.isEmpty) "" else s"\n- STAR (${diff.newStargazerLogins.size})\n${prettyLoginList(diff.newStargazerLogins)}"}" +
+        s"${if (diff.newForkLogins.isEmpty) "" else s"\n- FORK (${diff.newForkLogins.size})\n${prettyLoginList(diff.newForkLogins)}"}" +
+        s"${if (diff.newWatcherLogins.isEmpty) "" else s"\n- WATCH (${diff.newWatcherLogins.size})\n${prettyLoginList(diff.newWatcherLogins)}"}"
       else ""
     }${
       if (diff.hasDelChanged) "\n[DELETED]" +
-        s"${if (diff.delStargazerLogins.isEmpty) "" else s"\n- STAR(${diff.delStargazerLogins.size})\n${prettyLoginList(diff.delStargazerLogins)}"}" +
-        s"${if (diff.delForkLogins.isEmpty) "" else s"\n- FORK(${diff.delForkLogins.size})\n${prettyLoginList(diff.delForkLogins)}"}" +
-        s"${if (diff.delWatcherLogins.isEmpty) "" else s"\n- WATCH(${diff.delWatcherLogins.size})\n${prettyLoginList(diff.delWatcherLogins)}"}"
+        s"${if (diff.delStargazerLogins.isEmpty) "" else s"\n- STAR (${diff.delStargazerLogins.size})\n${prettyLoginList(diff.delStargazerLogins)}"}" +
+        s"${if (diff.delForkLogins.isEmpty) "" else s"\n- FORK (${diff.delForkLogins.size})\n${prettyLoginList(diff.delForkLogins)}"}" +
+        s"${if (diff.delWatcherLogins.isEmpty) "" else s"\n- WATCH (${diff.delWatcherLogins.size})\n${prettyLoginList(diff.delWatcherLogins)}"}"
       else ""
     }
        |""".stripMargin.strip
