@@ -8,6 +8,8 @@ on:
       - 'hotfix/**'
       - '!feature/**'
       - '!refactoring/**'
+    paths-ignore:
+      - '**.md'
   pull_request:
     branches: [ master ]
 
@@ -37,7 +39,7 @@ jobs:
         stack-version: 7.9.0
     
     - name: Check Elasticsearch
-      run: curl -XGET localhost:9200
+      run: curl -sS -XGET localhost:9200
 
     - name: Run assembly
       run: sbt clean assembly
