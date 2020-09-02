@@ -1,6 +1,7 @@
 # GithubWatcher
 
 [![HitCount](http://hits.dwyl.com/occidere/GithubWatcher.svg)](http://hits.dwyl.com/occidere/GithubWatcher)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Foccidere%2FGithubWatcher.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Foccidere%2FGithubWatcher?ref=badge_shield)
 <img src="https://img.shields.io/github/languages/top/occidere/GithubWatcher"/>
 <img src="https://img.shields.io/github/issues/occidere/GithubWatcher"/>
 [![Java Version](https://img.shields.io/badge/java-1.8+-orange.svg)](https://www.java.com/ko/)
@@ -61,3 +62,7 @@ export gw_github_api_token=${YOUR_GITHUB_API_TOKEN}
 
 java -jar target/scala-2.13/GithubWatcher.jar
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Foccidere%2FGithubWatcher.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Foccidere%2FGithubWatcher?ref=badge_large)
