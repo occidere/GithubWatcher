@@ -61,3 +61,7 @@ export gw_github_api_token=${YOUR_GITHUB_API_TOKEN}
 
 java -jar target/scala-2.13/GithubWatcher.jar
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Foccidere%2FGithubWatcher.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Foccidere%2FGithubWatcher?ref=badge_large)
