@@ -1,6 +1,5 @@
 # GithubWatcher
 
-[![HitCount](http://hits.dwyl.com/occidere/GithubWatcher.svg)](http://hits.dwyl.com/occidere/GithubWatcher)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Foccidere%2FGithubWatcher.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Foccidere%2FGithubWatcher?ref=badge_shield)
 <img src="https://img.shields.io/github/languages/top/occidere/GithubWatcher"/>
 <img src="https://img.shields.io/github/issues/occidere/GithubWatcher"/>
