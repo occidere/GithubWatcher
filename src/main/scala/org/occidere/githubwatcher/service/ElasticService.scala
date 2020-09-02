@@ -16,9 +16,7 @@ import scala.util.Try
  * @since 2020-08-31
  */
 object ElasticService extends GithubWatcherLogger {
-  private lazy val client = ElasticClient(JavaClient(ElasticProperties(
-    s"http://${sys.env.getOrElse("gw_es_endpoint", "localhost:9200")}")))
-
+  private lazy val client = ElasticClient(JavaClient(ElasticProperties(s"http://${sys.env.getOrElse("gw_es_endpoint", "localhost:9200")}")))
   private lazy val MAPPER = new ObjectMapper().registerModule(DefaultScalaModule)
 
   private val GITHUB_USERS = "github-users"

@@ -40,11 +40,10 @@ object RepositoryWatchTask extends GithubWatcherLogger {
       // Send message
       if (diff.hasChanged) LineMessengerService.sendRepositoryMessage(diff)
     } match {
-      case Success(_) => logger.info(s"${latestRepo.name} process success")
       case Failure(exception) => logger.error(s"${latestRepo.name} process failed", exception)
+      case Success(_) => // Save latest repos
+        ElasticService.saveAllRepos(latestRepos)
+        logger.info(s"${latestRepo.name} process success")
     }
-
-    // Save latest repos
-    ElasticService.saveAllRepos(latestRepos)
   }
 }

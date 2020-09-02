@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import org.occidere.githubwatcher.vo.{Repository, User}
 import scalaj.http._
 
-
 /**
  * @author occidere
  * @Blog: https://occidere.blog.me
@@ -13,7 +12,7 @@ import scalaj.http._
  * @since 2020-08-28
  */
 object GithubApiService {
-  private lazy val TOKEN = scala.util.Properties.envOrElse("gw_github_api_token", "")
+  private lazy val TOKEN = sys.env.getOrElse("gw_github_api_token", "")
   private lazy val MAPPER = new ObjectMapper().registerModule(DefaultScalaModule)
 
   def getUser(login: String): User = MAPPER.convertValue(getBody(s"users/$login"), classOf[User])
@@ -30,7 +29,7 @@ object GithubApiService {
 
   def getForkLogins(login: String, repo: String): List[String] = getLogins(login, repo)("forks")
 
-  private def getLogins(login: String, repo: String)(userType: String): List[String] = getBodies(s"repos/$login/$repo/$userType")
+  private def getLogins(login: String, repo: String)(actionType: String): List[String] = getBodies(s"repos/$login/$repo/$actionType")
     .map(_.getOrElse("login", "").toString)
     .filter(_.nonEmpty)
 
@@ -39,8 +38,8 @@ object GithubApiService {
   private def getBodies(url: String): List[Map[String, Any]] = Iterator.from(1)
     .map(page => MAPPER.readValue(
       getResponse(s"$url?page=$page").body,
-      classOf[List[Map[String, Any]]])
-    ).takeWhile(_.nonEmpty)
+      classOf[List[Map[String, Any]]]))
+    .takeWhile(_.nonEmpty)
     .flatten
     .toList
 

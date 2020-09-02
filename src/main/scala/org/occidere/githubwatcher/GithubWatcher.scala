@@ -14,25 +14,17 @@ import scala.util.{Failure, Success, Try}
 object GithubWatcher extends App with GithubWatcherTask with GithubWatcherLogger {
   private val userId = sys.env.getOrElse("gw_user_id", "")
   sys.env.getOrElse("gw_tasks", "").split(",").map(_.trim)
-    .foreach(task => {
-      if (AVAILABLE_TASKS.contains(task)) {
-        if (task == FOLLOWER_WATCH_TASK) {
-          Try(FollowerWatchTask.run(userId)) match {
-            case Success(_) => logger.info(s"$FOLLOWER_WATCH_TASK Success!")
-            case Failure(exception) => logger.error(s"$FOLLOWER_WATCH_TASK Failed!", exception)
-          }
-        }
-
-        if (task == REPOSITORY_WATCH_TASK) {
-          Try(RepositoryWatchTask.run(userId)) match {
-            case Success(_) => logger.info(s"$REPOSITORY_WATCH_TASK Success!")
-            case Failure(exception) => logger.error(s"$REPOSITORY_WATCH_TASK Failed!", exception)
-          }
-        }
-      } else {
-        logger.warn(s"Unsupported Task: $task")
+    .foreach {
+      case FOLLOWER_WATCH_TASK => Try(FollowerWatchTask.run(userId)) match {
+        case Success(_) => logger.info(s"$FOLLOWER_WATCH_TASK Success!")
+        case Failure(exception) => logger.error(s"$FOLLOWER_WATCH_TASK Failed!", exception)
       }
-    })
+      case REPOSITORY_WATCH_TASK => Try(RepositoryWatchTask.run(userId)) match {
+        case Success(_) => logger.info(s"$REPOSITORY_WATCH_TASK Success!")
+        case Failure(exception) => logger.error(s"$REPOSITORY_WATCH_TASK Failed!", exception)
+      }
+      case task => logger.warn(s"Unsupported task: $task")
+    }
 
   sys.exit(0)
 }
