@@ -32,18 +32,22 @@ object RepositoryWatchTask extends GithubWatcherLogger {
     logger.info(s"The number of repos from ES: ${prevRepos.size}")
 
     // Diff & Send message if changed
-    for (latestRepo <- latestRepos) Try {
-      val prevRepo = prevRepos.getOrElse(latestRepo.id, Repository(latestRepo.id, latestRepo.name, latestRepo.description))
-      val diff = RepositoryDiff(prevRepo, latestRepo)
+    val changedLatestRepos = latestRepos.filter(latest => {
+      val prev = prevRepos.getOrElse(latest.id, Repository(latest.id, latest.name, latest.description))
+      val diff = RepositoryDiff(prev, latest)
       logger.info(s"Repo: ${diff.repoName} (changed: ${diff.hasChanged})")
 
       // Send message
-      if (diff.hasChanged) LineMessengerService.sendRepositoryMessage(diff)
-    } match {
-      case Failure(exception) => logger.error(s"${latestRepo.name} process failed", exception)
-      case Success(_) => // Save latest repos
-        ElasticService.saveAllRepos(latestRepos)
-        logger.info(s"${latestRepo.name} process success")
-    }
+      Try(if (diff.hasChanged) LineMessengerService.sendRepositoryMessage(diff)) match {
+        case Failure(exception) =>
+          logger.error(s"${latest.name} process failed", exception)
+          false
+        case Success(_) =>
+          logger.info(s"${latest.name} process success")
+          diff.hasChanged // Save to ES which only chang occurred
+      }
+    })
+
+    if (changedLatestRepos.nonEmpty) ElasticService.saveAllRepos(changedLatestRepos)
   }
 }
