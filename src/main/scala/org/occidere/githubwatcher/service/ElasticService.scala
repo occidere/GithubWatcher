@@ -3,10 +3,12 @@ package org.occidere.githubwatcher.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.sksamuel.elastic4s.http.JavaClient
+import com.sksamuel.elastic4s.requests.searches.SearchIterator
 import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties}
 import org.occidere.githubwatcher.logger.GithubWatcherLogger
 import org.occidere.githubwatcher.vo._
 
+import scala.concurrent.duration.{Duration, MINUTES}
 import scala.util.Try
 
 /**
@@ -38,10 +40,13 @@ object ElasticService extends GithubWatcherLogger {
       .refreshImmediately
   }.await
 
-  def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = Try( // TODO: Scroll API 적용
-    client.execute {
-      search(GITHUB_REPOS).size(1000).bool(boolQuery().filter(query(s"ownerLogin.keyword:$ownerLogin")))
-    }.await.result.hits.hits.map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Repository])).toList
+  def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = Try(
+    SearchIterator.hits(client,
+      search(GITHUB_REPOS)
+        .bool(boolQuery().filter(query(s"ownerLogin.keyword:$ownerLogin")))
+        .keepAlive("1m")
+        .size(100))(Duration(5, MINUTES))
+      .map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Repository])).toList
   ).getOrElse(List())
 
   def saveAllRepos(repos: List[Repository]): Unit = client.execute {
