@@ -27,7 +27,7 @@ jobs:
       - name: Run assembly
         run: sbt clean assembly
 
-  test:
+  test with coverage:
     runs-on: ubuntu-latest
     steps:
       - name: Configure sysctl limits
@@ -45,7 +45,7 @@ jobs:
       - name: Check Elasticsearch
         run: curl -sS -XGET localhost:9200
 
-      - name: Run tests
+      - name: Run tests with coverage
         env:
           gw_user_id: 'occidere'
           gw_es_endpoint: 'localhost:9200'
