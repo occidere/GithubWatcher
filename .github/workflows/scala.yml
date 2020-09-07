@@ -49,7 +49,7 @@ jobs:
         env:
           gw_user_id: 'occidere'
           gw_es_endpoint: 'localhost:9200'
-        run: sbt test
+        run: sbt clean coverage test coverageReport
 
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v1.1.2

@@ -16,6 +16,11 @@ assemblyMergeStrategy in assembly := {
   case _ => MergeStrategy.last
 }
 
+coverageMinimum := 50
+coverageEnabled := true
+coverageHighlighting := true
+coverageFailOnMinimum := false
+
 val elastic4sVersion = "7.9.0"
 val jacksonVersion = "2.11.2"
 val lineBotVersion = "4.0.0"
