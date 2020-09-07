@@ -15,47 +15,47 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 11
+      - uses: actions/checkout@v2
 
-    - name: Run assembly
-      run: sbt clean assembly
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Run assembly
+        run: sbt clean assembly
 
   test:
-    - name: Configure sysctl limits
-      run: |
-        # sudo swapoff -a
-        # sudo sysctl -w wm.swappiness=1
-        sudo sysctl -w fs.file-max=262144
-        sudo sysctl -w vm.max_map_count=262144
-        
-    - name: Run Elasticsearch
-      uses: elastic/elastic-github-actions/elasticsearch@master
-      with:
-        stack-version: 7.9.0
-    
-    - name: Check Elasticsearch
-      run: curl -sS -XGET localhost:9200
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure sysctl limits
+        run: |
+          # sudo swapoff -a
+          # sudo sysctl -w wm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
 
-    - name: Run tests
-      env:
-        gw_user_id: 'occidere'
-        gw_es_endpoint: 'localhost:9200'
-      run: sbt test
+      - name: Run Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 7.9.0
 
-    - name: Coveralls GitHub Action
-      uses: coverallsapp/github-action@v1.1.2
-      with:
-        github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        parallel: true
+      - name: Check Elasticsearch
+        run: curl -sS -XGET localhost:9200
+
+      - name: Run tests
+        env:
+          gw_user_id: 'occidere'
+          gw_es_endpoint: 'localhost:9200'
+        run: sbt test
+
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          parallel: true
 
   finish:
     needs: test
