@@ -27,7 +27,7 @@ jobs:
       - name: Run assembly
         run: sbt clean assembly
 
-  test with coverage:
+  test_with_coverage:
     runs-on: ubuntu-latest
     steps:
       - name: Configure sysctl limits
