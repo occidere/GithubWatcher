@@ -56,6 +56,9 @@ jobs:
       - name: Check Elasticsearch
         run: curl -sS -XGET localhost:9200
 
+      - name: Set env
+        run: echo ::set-env name=CI_BRANCH::$(git rev-parse --abbrev-ref HEAD)
+
       - name: Run tests with coverage
         env:
           gw_user_id: 'occidere'
