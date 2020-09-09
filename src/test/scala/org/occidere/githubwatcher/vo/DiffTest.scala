@@ -16,7 +16,7 @@ class DiffTest extends AnyFlatSpec with should.Matchers {
     followerDiff.newFollowerLogins.length should be >= 1
     followerDiff.deletedFollowerLogins.length should be >= 1
     followerDiff.notChangedFollowerLogins.length should be >= 1
-    followerDiff.hasChanged shouldEqual(true)
+    followerDiff.hasChanged shouldEqual true
   }
 
   "Each elements of RepositoryDiff" should "have at least 1 element and marked as changed" in {
@@ -41,6 +41,8 @@ class DiffTest extends AnyFlatSpec with should.Matchers {
     repositoryDiff.delForkLogins.length should be >= 1
     repositoryDiff.delWatcherLogins.length should be >= 1
 
-    (repositoryDiff.hasNewChanged && repositoryDiff.hasDelChanged && repositoryDiff.hasChanged) shouldEqual(true)
+    repositoryDiff.hasNewChanged shouldEqual true
+    repositoryDiff.hasDelChanged shouldEqual true
+    repositoryDiff.hasChanged shouldEqual true
   }
 }
