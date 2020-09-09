@@ -2,8 +2,11 @@ package org.occidere.githubwatcher.service
 
 import org.occidere.githubwatcher.util.MessageBuilderUtils
 import org.occidere.githubwatcher.vo.{FollowerDiff, Repository, RepositoryDiff}
+import org.scalatest.PrivateMethodTester
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
+
+import scala.util.{Success, Try}
 
 /**
  * @author occidere
@@ -11,7 +14,7 @@ import org.scalatest.matchers.should
  * @Github: https://github.com/occidere
  * @since 2020-08-31
  */
-class LineMessengerServiceTest extends AnyFlatSpec with should.Matchers {
+class LineMessengerServiceTest extends AnyFlatSpec with PrivateMethodTester with should.Matchers {
 
   "createRepositoryMessage" should "Contain at least 15 lines" in {
     val prevRepo = new Repository("1", "test1", "desc1") {
@@ -39,5 +42,36 @@ class LineMessengerServiceTest extends AnyFlatSpec with should.Matchers {
 
     println(followerMessage)
     followerMessage.split("\n").length should be >= 4
+  }
+
+  "sendMessageIfExist with token" should "be succeeded" in {
+    Try(LineMessengerService invokePrivate PrivateMethod('sendMessageIfExist)("test")) match {
+      case Success(_) => println("Test message send success")
+    }
+  }
+
+  "sendFollowerMessage with token" should "be succeeded" in {
+    Try(LineMessengerService.sendFollowerMessage(FollowerDiff(List("a", "b"), List("a", "c")))) match {
+      case Success(_) => println(s"Message send success")
+    }
+  }
+
+  "sendRepositoryMessage with token" should "be succeeded" in {
+    Try(LineMessengerService.sendRepositoryMessage(
+      RepositoryDiff(
+        new Repository("1", "test", "desc") {
+          stargazerLogins = List("a", "b")
+          forkLogins = List("a", "b")
+          watcherLogins = List("a", "b")
+        },
+        new Repository("1", "test", "desc") {
+          stargazerLogins = List("b", "c")
+          forkLogins = List("b", "c")
+          watcherLogins = List("b", "c")
+        }
+      ))
+    ) match {
+      case Success(_) => println(s"Message send success")
+    }
   }
 }
