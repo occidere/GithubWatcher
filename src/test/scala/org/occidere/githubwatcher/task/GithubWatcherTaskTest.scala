@@ -5,6 +5,8 @@ import org.scalatest.PrivateMethodTester
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
+import scala.util.{Success, Try}
+
 /**
  * @author occidere
  * @Blog: https://occidere.blog.me
@@ -13,6 +15,8 @@ import org.scalatest.matchers.should
  */
 class GithubWatcherTaskTest extends AnyFlatSpec with PrivateMethodTester with should.Matchers {
   "All tasks test" should "finished successfully" in {
-    GithubWatcher.main(Array())
+    Try(GithubWatcher.main(Array())) match {
+      case Success(_) => println("All tasks success")
+    }
   }
 }
