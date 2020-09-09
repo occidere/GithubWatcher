@@ -17,9 +17,10 @@ assemblyMergeStrategy in assembly := {
 }
 
 coverageMinimum := 50
-coverageEnabled := true
 coverageHighlighting := true
 coverageFailOnMinimum := false
+coverageEnabled.in(Test, test) := true
+coverageEnabled.in(Compile, compile) := false
 
 val elastic4sVersion = "7.9.0"
 val jacksonVersion = "2.11.2"
