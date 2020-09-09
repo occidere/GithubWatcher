@@ -49,7 +49,7 @@ class GithubApiServiceTest extends AnyFlatSpec with should.Matchers {
   }
 
   "getForkLogins" should "return nonNull Iterable of Strings" in {
-    val getForkLogins = githubApiService.getWatcherLogins("occidere", "MMDownloader")
+    val getForkLogins = githubApiService.getForkLogins("occidere", "MMDownloader")
 
     println(getForkLogins)
     getForkLogins.shouldNot(be(null))
