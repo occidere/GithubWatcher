@@ -1,6 +1,7 @@
 package org.occidere.githubwatcher
 
 import org.occidere.githubwatcher.logger.GithubWatcherLogger
+import org.occidere.githubwatcher.service.ElasticService
 import org.occidere.githubwatcher.task.{FollowerWatchTask, GithubWatcherTask, RepositoryWatchTask}
 
 import scala.util.{Failure, Success, Try}
@@ -26,5 +27,5 @@ object GithubWatcher extends App with GithubWatcherTask with GithubWatcherLogger
       case task => logger.warn(s"Unsupported task: $task")
     }
 
-  sys.exit(0)
+  ElasticService.close()
 }
