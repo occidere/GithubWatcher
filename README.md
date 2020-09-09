@@ -1,12 +1,12 @@
 # GithubWatcher
 
+![Scala CI](https://github.com/occidere/GithubWatcher/workflows/Scala%20CI/badge.svg)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Foccidere%2FGithubWatcher.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Foccidere%2FGithubWatcher?ref=badge_shield)
 [![Coverage Status](https://coveralls.io/repos/github/occidere/GithubWatcher/badge.svg?branch=master)](https://coveralls.io/github/occidere/GithubWatcher?branch=master)
-<img src="https://img.shields.io/github/languages/top/occidere/GithubWatcher"/>
-<img src="https://img.shields.io/github/issues/occidere/GithubWatcher"/>
 [![Java Version](https://img.shields.io/badge/java-1.8+-orange.svg)](https://www.java.com/ko/)
 [![Scala Version](https://img.shields.io/badge/Scala-2.13-red.svg)](https://www.scala-lang.org/download/)
 [![GitHub license](https://img.shields.io/github/license/occidere/GithubWatcher.svg)](https://github.com/occidere/GithubWatcher/blob/master/LICENSE)
+
 
 Integrated GitHub Activity Notification System.
 
