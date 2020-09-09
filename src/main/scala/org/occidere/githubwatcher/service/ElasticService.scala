@@ -57,4 +57,6 @@ object ElasticService extends GithubWatcherLogger {
         .fields(repoMap))
     ).refreshImmediately
   }.await
+
+  def close(): Unit = client.close()
 }
