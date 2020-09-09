@@ -1,7 +1,7 @@
 package org.occidere.githubwatcher.service
 
 import org.occidere.githubwatcher.util.MessageBuilderUtils
-import org.occidere.githubwatcher.vo.{Repository, RepositoryDiff}
+import org.occidere.githubwatcher.vo.{FollowerDiff, Repository, RepositoryDiff}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
@@ -13,7 +13,7 @@ import org.scalatest.matchers.should
  */
 class LineMessengerServiceTest extends AnyFlatSpec with should.Matchers {
 
-  "Message formatting test" should "Always success" in {
+  "createRepositoryMessage" should "Contain at least 15 lines" in {
     val prevRepo = new Repository("1", "test1", "desc1") {
       stargazerLogins = List("a", "b")
       forkLogins = List("a", "b")
@@ -27,6 +27,17 @@ class LineMessengerServiceTest extends AnyFlatSpec with should.Matchers {
     }
 
     val msg = MessageBuilderUtils.createRepositoryMessage(RepositoryDiff(prevRepo, latestRepo))
+
     println(msg)
+    msg.split("\n").length should be >= 15
+  }
+
+  "createFollowerMessage" should "Contain at least 4 lines" in {
+    val followerDiff = FollowerDiff(List("a", "b"), List("a", "c"))
+
+    val followerMessage = MessageBuilderUtils.createFollowerMessage(followerDiff)
+
+    println(followerMessage)
+    followerMessage.split("\n").length should be >= 4
   }
 }
