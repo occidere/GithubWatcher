@@ -12,9 +12,9 @@ import scala.util.{Failure, Success, Try}
  * @Github: https://github.com/occidere
  * @since 2020-08-31
  */
-object RepositoryWatchTask extends GithubWatcherLogger {
+object RepositoryWatchTask extends Task with GithubWatcherLogger {
 
-  def run(userId: String): Unit = {
+  override def run(userId: String): Unit = {
     logger.info(s"User ID: $userId")
 
     // Latest repos from API

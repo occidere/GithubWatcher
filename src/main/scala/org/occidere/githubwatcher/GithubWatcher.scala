@@ -15,17 +15,13 @@ import scala.util.{Failure, Success, Try}
 object GithubWatcher extends App with GithubWatcherTask with GithubWatcherLogger {
   private val userId = sys.env.getOrElse("gw_user_id", "")
   sys.env.getOrElse("gw_tasks", "").split(",").map(_.trim)
-    .foreach {
-      case FOLLOWER_WATCH_TASK => Try(FollowerWatchTask.run(userId)) match {
-        case Success(_) => logger.info(s"$FOLLOWER_WATCH_TASK Success!")
-        case Failure(exception) => logger.error(s"$FOLLOWER_WATCH_TASK Failed!", exception)
+    .foreach(task => {
+      if (!AVAILABLE_TASKS.contains(task)) logger.warn(s"Unsupported task: $task")
+      else Try(AVAILABLE_TASKS(task).run(userId)) match {
+        case Success(_) => logger.info(s"$task Success!")
+        case Failure(e) => logger.error(s"$task Failed!", e)
       }
-      case REPOSITORY_WATCH_TASK => Try(RepositoryWatchTask.run(userId)) match {
-        case Success(_) => logger.info(s"$REPOSITORY_WATCH_TASK Success!")
-        case Failure(exception) => logger.error(s"$REPOSITORY_WATCH_TASK Failed!", exception)
-      }
-      case task => logger.warn(s"Unsupported task: $task")
-    }
+    })
 
   ElasticService.close()
 }
