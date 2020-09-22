@@ -7,8 +7,8 @@ package org.occidere.githubwatcher.task
  * @since 2020-09-01
  */
 trait GithubWatcherTask {
-  protected val FOLLOWER_WATCH_TASK = "followerWatchTask"
-  protected val REPOSITORY_WATCH_TASK = "repositoryWatchTask"
-
-  protected val AVAILABLE_TASKS = Set(FOLLOWER_WATCH_TASK, REPOSITORY_WATCH_TASK)
+  protected val AVAILABLE_TASKS: Map[String, Task] = Map(
+    "followerWatchTask" -> FollowerWatchTask,
+    "repositoryWatchTask" -> RepositoryWatchTask
+  )
 }

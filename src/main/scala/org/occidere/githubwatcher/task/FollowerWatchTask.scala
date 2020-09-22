@@ -10,9 +10,9 @@ import org.occidere.githubwatcher.vo.FollowerDiff
  * @Github: https://github.com/occidere
  * @since 2020-08-31
  */
-object FollowerWatchTask extends GithubWatcherLogger {
+object FollowerWatchTask extends Task with GithubWatcherLogger {
 
-  def run(userId: String): Unit = {
+  override def run(userId: String): Unit = {
     logger.info(s"User ID: $userId")
 
     // Data from GitHub API
