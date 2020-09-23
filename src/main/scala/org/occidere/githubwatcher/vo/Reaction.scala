@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonInclude, Json
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-case class Reaction(id: Int) {
+case class Reaction(id: Int, originDataType: String) {
   @JsonProperty("html_url")
   var htmlUrl: String = ""
   var login: String = ""
