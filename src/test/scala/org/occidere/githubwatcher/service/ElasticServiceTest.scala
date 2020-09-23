@@ -1,6 +1,6 @@
 package org.occidere.githubwatcher.service
 
-import org.occidere.githubwatcher.vo.{Repository, User}
+import org.occidere.githubwatcher.vo.{Reaction, Repository, User}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers._
 
@@ -58,5 +58,30 @@ class ElasticServiceTest extends AnyFlatSpec with should.Matchers {
     val repos = elasticService.findAllReposByOwnerLogin("test")
     repos.size should be >= 3
     println(repos)
+  }
+
+  "fineAllReactionsByLogin with not exist user" should "return empty list" in {
+    val reactions: List[Reaction] = elasticService.fineAllReactionsByLogin("!@#$")
+
+    println(s"reactions = $reactions")
+    reactions.size shouldBe 0
+  }
+
+  "findAllReactionsByLogin with exist user" should "return nonEmpty list" in {
+    // BUILD
+    val testLogin = "gw_test_id"
+    val reactions = List(new Reaction(-1, "issue") {
+      login = testLogin
+      title = "Test Title"
+      body = "Test Body"
+    })
+    elasticService.saveAllReactions(reactions)
+
+    // OPERATE
+    val resp = elasticService.fineAllReactionsByLogin(testLogin)
+
+    // CHECK
+    println(resp)
+    resp.length should be > 0
   }
 }

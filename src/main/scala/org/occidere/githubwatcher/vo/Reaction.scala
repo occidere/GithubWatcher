@@ -28,6 +28,8 @@ case class Reaction(id: Int, originDataType: String) {
   var thumbUp: Int = 0
   var thumbDown: Int = 0
 
+  lazy val uniqueKey: String = s"$originDataType$id".hashCode.toString
+
   @JsonProperty("reactions")
   private def unpackReactions(reactions: Map[String, Any]): Unit = {
     totalCount = reactions("total_count").asInstanceOf[Int]
