@@ -1,6 +1,6 @@
 package org.occidere.githubwatcher.service
 
-import org.occidere.githubwatcher.vo.User
+import org.occidere.githubwatcher.vo.{Reaction, User}
 import org.scalatest.PrivateMethodTester
 import org.scalatest.flatspec._
 import org.scalatest.matchers._
@@ -56,11 +56,19 @@ class GithubApiServiceTest extends AnyFlatSpec with PrivateMethodTester with sho
     getForkLogins.shouldNot(be(null))
   }
 
-  "getIssuesReactionsOfAuthUser" should "return nonNull Iterable of Reaction" in {
-    val reactions = githubApiService.getIssuesReactionsOfAuthUser
+  "getReactionsOfIssuesCreatedByUser" should "return nonNull Iterable of Reaction" in {
+    val reactions = githubApiService.getReactionsOfIssuesCreatedByUser
 
     println(reactions.size)
-    println(reactions.find(x => x.totalCount > 0).orNull)
+    println(reactions.find(_.totalCount > 0).orNull)
+    reactions shouldNot be(null)
+  }
+
+  "getReactionsOfIssuesInRepository" should "return nonNull List of Reactions" in {
+    val reactions = githubApiService.getReactionsOfIssuesInRepository("occidere", "TIL")
+
+    println(reactions.size)
+    println(reactions.find(_.totalCount > 0).orNull)
     reactions shouldNot be(null)
   }
 

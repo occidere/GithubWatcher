@@ -21,8 +21,12 @@ object GithubApiService {
     .map(_.getOrElse("login", "").toString)
     .filter(_.nonEmpty)
 
-  def getIssuesReactionsOfAuthUser: List[Reaction] = getBodies(s"issues", Map("per_page" -> "100", "filter" -> "created", "state" -> "all"))
+  def getReactionsOfIssuesCreatedByUser: List[Reaction] = getBodies("issues", Map("per_page" -> "100", "filter" -> "created", "state" -> "all"))
     .map(MAPPER.convertValue(_, classOf[Reaction]))
+
+  def getReactionsOfIssuesInRepository(login: String, repo: String): List[Reaction] = getBodies(s"repos/$login/$repo/issues/comments")
+    .map(MAPPER.convertValue(_, classOf[Reaction]))
+    .filter(_.login == login)
 
   def getRepositories(login: String): List[Repository] = getBodies(s"users/$login/repos").map(MAPPER.convertValue(_, classOf[Repository]))
 
