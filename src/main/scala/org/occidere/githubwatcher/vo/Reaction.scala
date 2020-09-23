@@ -16,6 +16,7 @@ case class Reaction(id: Int) {
   var login: String = ""
   var title: String = ""
   var body: String = ""
+  var repoName: String = ""
 
   var totalCount: Int = 0
   var laugh: Int = 0
@@ -39,6 +40,9 @@ case class Reaction(id: Int) {
     thumbUp = reactions("+1").asInstanceOf[Int]
     thumbDown = reactions("-1").asInstanceOf[Int]
   }
+
+  @JsonProperty("repository")
+  private def unpackRepository(repository: Map[String, Any]): Unit = repoName = repository("name").toString
 
   @JsonProperty("user")
   private def unpackUser(user: Map[String, Any]): Unit = login = user("login").toString
