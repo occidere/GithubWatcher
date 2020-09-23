@@ -42,6 +42,10 @@ class ElasticServiceTest extends AnyFlatSpec with should.Matchers {
     println(repos)
   }
 
+  "findAllReposByOwnerLogin(!@#$)" should "return empty List" in {
+    elasticService.findAllReposByOwnerLogin("!@#$").length shouldBe 0
+  }
+
   "saveAllReposByOwnerLogin(test)" should "save 3 repos" in {
     val repo1 = new Repository("999", "testRepo1", "테스트") {
       ownerLogin = "test"
