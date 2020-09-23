@@ -1,6 +1,7 @@
 package org.occidere.githubwatcher.service
 
 import org.occidere.githubwatcher.vo.User
+import org.scalatest.PrivateMethodTester
 import org.scalatest.flatspec._
 import org.scalatest.matchers._
 
@@ -10,7 +11,7 @@ import org.scalatest.matchers._
  * @Github: https://github.com/occidere
  * @since 2020-08-28
  */
-class GithubApiServiceTest extends AnyFlatSpec with should.Matchers {
+class GithubApiServiceTest extends AnyFlatSpec with PrivateMethodTester with should.Matchers {
   private val githubApiService = GithubApiService
 
   "getUser" should "return User type vo" in {
@@ -53,5 +54,34 @@ class GithubApiServiceTest extends AnyFlatSpec with should.Matchers {
 
     println(getForkLogins)
     getForkLogins.shouldNot(be(null))
+  }
+
+  "getIssuesReactionsOfAuthUser" should "return nonNull Iterable of Reaction" in {
+    val reactions = githubApiService.getIssuesReactionsOfAuthUser
+
+    println(reactions.size)
+    println(reactions.find(x => x.totalCount > 0).orNull)
+    reactions shouldNot be(null)
+  }
+
+  "Call toUrlEncoded with nonEmpty params" should "start with ? and separated by & each" in {
+    val params = Map(
+      "page" -> "1",
+      "per_page" -> "100",
+      "filter" -> "created"
+    )
+
+    val urlEncoded: String = githubApiService invokePrivate PrivateMethod('toUrlEncoded)(params)
+
+    println(urlEncoded)
+    urlEncoded should startWith("?")
+    urlEncoded split "&" should have length 3
+  }
+
+  "Call toUrlEncoded with empty params" should "return empty string" in {
+    val urlEncoded: String = githubApiService invokePrivate PrivateMethod('toUrlEncoded)(Map())
+
+    println(s"urlEncoded = $urlEncoded")
+    urlEncoded shouldBe empty
   }
 }
