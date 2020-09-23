@@ -23,6 +23,7 @@ object ElasticService extends GithubWatcherLogger {
 
   private val GITHUB_USERS = "github-users"
   private val GITHUB_REPOS = "github-repos"
+  private val GITHUB_REACTIONS = "github-reactions"
 
   import com.sksamuel.elastic4s.ElasticDsl._
 
@@ -55,6 +56,24 @@ object ElasticService extends GithubWatcherLogger {
       .map(repoMap => indexInto(GITHUB_REPOS)
         .id(repoMap("id").toString)
         .fields(repoMap))
+    ).refreshImmediately
+  }.await
+
+  def fineAllReactionsByLogin(login: String): List[Reaction] = Try(
+    SearchIterator.hits(client,
+      search(GITHUB_REACTIONS)
+        .bool(boolQuery().filter(query(s"login.keyword:$login"))) // TODO: Deduplicate scroll search function
+        .keepAlive("1m")
+        .size(100))(Duration(5, MINUTES))
+      .map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Reaction])).toList
+  ).getOrElse(List())
+
+  def saveAllReactions(reactions: List[Reaction]): Unit = client.execute {
+    bulk(reactions
+      .map(MAPPER.convertValue(_, classOf[Map[String, Any]]))
+      .map(reactionMap => indexInto(GITHUB_REACTIONS)
+        .id(reactionMap("uniqueKey").toString)
+        .fields(reactionMap))
     ).refreshImmediately
   }.await
 
