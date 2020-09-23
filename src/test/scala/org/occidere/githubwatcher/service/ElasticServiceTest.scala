@@ -61,7 +61,7 @@ class ElasticServiceTest extends AnyFlatSpec with should.Matchers {
   }
 
   "fineAllReactionsByLogin with not exist user" should "return empty list" in {
-    val reactions: List[Reaction] = elasticService.fineAllReactionsByLogin("!@#$")
+    val reactions: List[Reaction] = elasticService.findAllReactionsByLogin("!@#$")
 
     println(s"reactions = $reactions")
     reactions.size shouldBe 0
