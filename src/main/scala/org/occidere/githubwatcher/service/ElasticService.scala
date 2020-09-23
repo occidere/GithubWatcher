@@ -59,7 +59,7 @@ object ElasticService extends GithubWatcherLogger {
     ).refreshImmediately
   }.await
 
-  def fineAllReactionsByLogin(login: String): List[Reaction] = Try(
+  def findAllReactionsByLogin(login: String): List[Reaction] = Try(
     SearchIterator.hits(client,
       search(GITHUB_REACTIONS)
         .bool(boolQuery().filter(query(s"login.keyword:$login"))) // TODO: Deduplicate scroll search function
