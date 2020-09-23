@@ -78,7 +78,7 @@ class ElasticServiceTest extends AnyFlatSpec with should.Matchers {
     elasticService.saveAllReactions(reactions)
 
     // OPERATE
-    val resp = elasticService.fineAllReactionsByLogin(testLogin)
+    val resp = elasticService.findAllReactionsByLogin(testLogin)
 
     // CHECK
     println(resp)
