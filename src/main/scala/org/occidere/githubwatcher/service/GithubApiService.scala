@@ -2,6 +2,7 @@ package org.occidere.githubwatcher.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import org.occidere.githubwatcher.enums.GithubDataType._
 import org.occidere.githubwatcher.vo.{Reaction, Repository, User}
 import scalaj.http._
 
@@ -22,10 +23,10 @@ object GithubApiService {
     .filter(_.nonEmpty)
 
   def getReactionsOfIssuesCreatedByUser: List[Reaction] = getBodies("issues", Map("per_page" -> "100", "filter" -> "created", "state" -> "all"))
-    .map(MAPPER.convertValue(_, classOf[Reaction]))
+    .map(x => MAPPER.convertValue(x + ("originDataType" -> ISSUE.toString), classOf[Reaction]))
 
-  def getReactionsOfIssuesInRepository(login: String, repo: String): List[Reaction] = getBodies(s"repos/$login/$repo/issues/comments")
-    .map(MAPPER.convertValue(_, classOf[Reaction]))
+  def getReactionsOfCommentsInRepository(login: String, repo: String): List[Reaction] = getBodies(s"repos/$login/$repo/issues/comments")
+    .map(x => MAPPER.convertValue(x + ("originDataType" -> COMMENT.toString), classOf[Reaction]))
     .filter(_.login == login)
 
   def getRepositories(login: String): List[Repository] = getBodies(s"users/$login/repos").map(MAPPER.convertValue(_, classOf[Repository]))
