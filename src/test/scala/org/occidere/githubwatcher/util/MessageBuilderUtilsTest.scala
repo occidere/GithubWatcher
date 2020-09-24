@@ -1,7 +1,5 @@
 package org.occidere.githubwatcher.util
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import org.occidere.githubwatcher.vo.{Reaction, ReactionDiff}
 import org.scalatest.PrivateMethodTester
 import org.scalatest.flatspec.AnyFlatSpec
