@@ -1,7 +1,7 @@
 package org.occidere.githubwatcher.service
 
 import org.occidere.githubwatcher.util.MessageBuilderUtils
-import org.occidere.githubwatcher.vo.{FollowerDiff, Repository, RepositoryDiff}
+import org.occidere.githubwatcher.vo._
 import org.scalatest.PrivateMethodTester
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
@@ -72,6 +72,39 @@ class LineMessengerServiceTest extends AnyFlatSpec with PrivateMethodTester with
       ))
     ) match {
       case Success(_) => println(s"Message send success")
+    }
+  }
+
+  "sendReactionMessage with token" should "be succeeded" in {
+    Try(LineMessengerService.sendReactionMessage(
+      ReactionDiff(
+        new Reaction(-1, "issue") {
+          thumbUp = 0
+          hooray = 0
+          eyes = 0
+          heart = 0
+          rocket = 0
+          laugh = 0
+          thumbDown = 1
+          confused = 1
+          title = "테스트 제목"
+          body = "테스트 내용"
+          htmlUrl = "https://github.com/occidere"
+        }, new Reaction(-1, "issue") {
+          thumbUp = 1
+          hooray = 1
+          eyes = 1
+          heart = 1
+          rocket = 1
+          laugh = 1
+          thumbDown = 0
+          confused = 0
+          title = "테스트 제목"
+          body = "테스트 내용"
+          htmlUrl = "https://github.com/occidere"
+        })
+    )) match {
+      case Success(_) => println("Message send success")
     }
   }
 }
