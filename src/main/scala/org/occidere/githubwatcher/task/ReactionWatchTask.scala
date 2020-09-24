@@ -1,7 +1,11 @@
 package org.occidere.githubwatcher.task
 
 import org.occidere.githubwatcher.logger.GithubWatcherLogger
-import org.occidere.githubwatcher.service.{ElasticService, GithubApiService}
+import org.occidere.githubwatcher.service.{ElasticService, GithubApiService, LineMessengerService}
+import org.occidere.githubwatcher.util.CopyUtils._
+import org.occidere.githubwatcher.vo.ReactionDiff
+
+import scala.util.{Failure, Success, Try}
 
 /**
  * @author occidere
@@ -13,23 +17,32 @@ object ReactionWatchTask extends Task with GithubWatcherLogger {
   override def run(userId: String): Unit = {
     logger.info(s"User ID: $userId")
 
-    // Data from GitHub API
     // Fetch reactions from Issues
     val reactionsFromIssues = GithubApiService.getReactionsOfIssuesCreatedByUser
 
-    // Fetch reactions from Repo
-    val latestReactions = reactionsFromIssues.map(_.repoName)
-      .distinct
-      .flatMap(GithubApiService.getReactionsOfCommentsInRepository(userId, _)) ++ reactionsFromIssues
+    // Merge issues' reactions with fetched reactions from Repo
+    val latestReactions = reactionsFromIssues.distinctBy(x => s"${x.repoOwnerLogin}/${x.repoName}".hashCode)
+      .flatMap(x => GithubApiService.getReactionsOfCommentsInRepository(x.repoOwnerLogin, x.repoName)) ++ reactionsFromIssues
 
     // Data from DB (Elasticsearch)
-    val prevReactions = ElasticService.findAllReactionsByLogin(userId)
+    val prevReactions = ElasticService.findAllReactionsByLogin(userId).map(x => x.uniqueKey -> x).toMap
 
-    // Diff
-    // TODO: Implement efficient diff
-
-    // Send line message
+    // Diff & Send line message
+    val changedReactions = latestReactions.filter(latest => {
+      val diff = ReactionDiff(prevReactions.getOrElse(latest.uniqueKey, copyReactionWithoutCounts(latest)), latest)
+      println(s"repo: ${diff.latestReaction.repoOwnerLogin}/${diff.latestReaction.repoName}, changed: ${diff.hasChanged}")
+      Try(if (diff.hasChanged) LineMessengerService.sendReactionMessage(diff)) match {
+        case Failure(e) =>
+          logger.error(s"${latest.uniqueKey} process failed", e)
+          false
+        case Success(_) =>
+          logger.info(s"${latest.uniqueKey} process success")
+          diff.hasChanged
+      }
+    })
 
     // Update DB to latest data
+    ElasticService.deleteAllReactionsByUniqueKeys(prevReactions.keySet -- latestReactions.map(_.uniqueKey)) // Delete reactions
+    ElasticService.saveAllReactions(changedReactions) // Upsert reactions
   }
 }
