@@ -17,7 +17,7 @@ Integrated GitHub Activity Notification System.
 Notify follower increase / decrease.
 
 #### Examples
-![image](https://user-images.githubusercontent.com/20942871/91848968-42e86f00-ec96-11ea-8316-7781634768ae.png)
+![image](https://user-images.githubusercontent.com/20942871/94106900-580c8400-fe77-11ea-8bf7-ec1410ca6bc2.png)
 
 
 <br>
@@ -26,7 +26,16 @@ Notify follower increase / decrease.
 Notify Stargazer / Watcher / Fork change both increase and decrease.
 
 #### Examples
-![image](https://user-images.githubusercontent.com/20942871/91850418-7e843880-ec98-11ea-9fd5-9b3f1226f42d.png)
+![image](https://user-images.githubusercontent.com/20942871/94106983-825e4180-fe77-11ea-8593-c89118b3f3e0.png)
+
+
+<br>
+
+### 3. Reaction change notification
+Notify Reaction Emoji increment / decrement.
+
+#### Examples
+![image](https://user-images.githubusercontent.com/20942871/94107066-ac176880-fe77-11ea-853f-e63695a2a1d3.png)
 
 
 <br>
@@ -36,9 +45,10 @@ Notify Stargazer / Watcher / Fork change both increase and decrease.
 2. Get previous information of user and repository from database (Elasticsearch)
 3. Comparing both of them to find changes
     - Increase/Decrease of Followers
-    - Increate/Decrease of Stargazers
-    - Increate/Decrease of Watchers
-    - Increate/Decrease of Forks
+    - Increase/Decrease of Stargazers
+    - Increase/Decrease of Watchers
+    - Increase/Decrease of Forks
+    - Increase/Decrease of Reactions Emoji
 4. Send notification message on [Line](https://line.me/en/)
 5. Save latest information on database
 
