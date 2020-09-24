@@ -33,11 +33,4 @@ class MessageBuilderUtilsTest extends AnyFlatSpec with PrivateMethodTester with 
     msg.contains(s"${ReactionEmojiConvertUtils.getEmoji("thumbUp")}") shouldBe true
     msg.contains(s"${ReactionEmojiConvertUtils.getEmoji("thumbDown")}") shouldBe false
   }
-
-  "Just Test" should "test" in {
-    val MAPPER = new ObjectMapper().registerModule(DefaultScalaModule)
-    println(MAPPER.readValue("""[{"a": 1}]""", classOf[List[Map[String, Any]]]))
-    println(MAPPER.readValue("""[]""", classOf[List[Map[String, Any]]]))
-    println(MAPPER.readValue("""""", classOf[List[Map[String, Any]]]))
-  }
 }
