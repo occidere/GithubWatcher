@@ -2,7 +2,7 @@ package org.occidere.githubwatcher
 
 import org.occidere.githubwatcher.logger.GithubWatcherLogger
 import org.occidere.githubwatcher.service.ElasticService
-import org.occidere.githubwatcher.task.{FollowerWatchTask, GithubWatcherTask, RepositoryWatchTask}
+import org.occidere.githubwatcher.task.GithubWatcherTask
 
 import scala.util.{Failure, Success, Try}
 
