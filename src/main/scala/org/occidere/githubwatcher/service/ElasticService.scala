@@ -50,14 +50,14 @@ object ElasticService extends GithubWatcherLogger {
       .map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Repository])).toList
   ).getOrElse(List())
 
-  def saveAllRepos(repos: List[Repository]): Unit = client.execute {
+  def saveAllRepos(repos: Iterable[Repository]): Unit = client.execute {
     bulk(repos
       .map(MAPPER.convertValue(_, classOf[Map[String, Any]]))
       .map(repoMap => indexInto(GITHUB_REPOS)
         .id(repoMap("id").toString)
         .fields(repoMap))
     ).refreshImmediately
-  }.await
+  }.await // TODO: Add bulk delete
 
   def findAllReactionsByLogin(login: String): List[Reaction] = Try(
     SearchIterator.hits(client,
@@ -68,7 +68,7 @@ object ElasticService extends GithubWatcherLogger {
       .map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Reaction])).toList
   ).getOrElse(List())
 
-  def saveAllReactions(reactions: List[Reaction]): Unit = client.execute {
+  def saveAllReactions(reactions: Iterable[Reaction]): Unit = client.execute {
     bulk(reactions
       .map(MAPPER.convertValue(_, classOf[Map[String, Any]]))
       .map(reactionMap => indexInto(GITHUB_REACTIONS)
@@ -77,11 +77,8 @@ object ElasticService extends GithubWatcherLogger {
     ).refreshImmediately
   }.await
 
-  def deleteAllReactions(reactions: List[Reaction]): Unit = client.execute {
-    bulk(
-      reactions.map(x => deleteById(GITHUB_REACTIONS, x.uniqueKey))
-    ).refreshImmediately
-  }
+  def deleteAllReactionsByUniqueKeys(uniqueKeys: Iterable[String]): Unit =
+    client.execute(bulk(uniqueKeys.map(deleteById(GITHUB_REACTIONS, _))).refreshImmediately)
 
   def close(): Unit = client.close()
 }
