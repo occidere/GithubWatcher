@@ -30,13 +30,12 @@ object ReactionWatchTask extends Task with GithubWatcherLogger {
     // Diff & Send line message
     val changedReactions = latestReactions.filter(latest => {
       val diff = ReactionDiff(prevReactions.getOrElse(latest.uniqueKey, copyReactionWithoutCounts(latest)), latest)
-      println(s"repo: ${diff.latestReaction.repoOwnerLogin}/${diff.latestReaction.repoName}, changed: ${diff.hasChanged}")
       Try(if (diff.hasChanged) LineMessengerService.sendReactionMessage(diff)) match {
         case Failure(e) =>
-          logger.error(s"${latest.uniqueKey} process failed", e)
+          logger.error(s"${latest.uniqueKey} process failed (htmlUrl: ${latest.htmlUrl})", e)
           false
         case Success(_) =>
-          logger.info(s"${latest.uniqueKey} process success")
+          logger.info(s"${latest.uniqueKey} process success (htmlUrl: ${latest.htmlUrl})")
           diff.hasChanged
       }
     })
