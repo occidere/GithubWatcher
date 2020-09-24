@@ -89,6 +89,6 @@ class ElasticServiceTest extends AnyFlatSpec with should.Matchers {
     resp.length should be > 0
 
     // Manual rollback
-    elasticService.deleteAllReactions(reactions)
+    elasticService.deleteAllReactionsByUniqueKeys(reactions.map(_.uniqueKey))
   }
 }
