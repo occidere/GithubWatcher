@@ -45,4 +45,18 @@ class DiffTest extends AnyFlatSpec with should.Matchers {
     repositoryDiff.hasDelChanged shouldEqual true
     repositoryDiff.hasChanged shouldEqual true
   }
+
+  "ReactionDiff" should "has changed in confusedDelta" in {
+    val prev = new Reaction(-1, "issue") {
+      confused = 1
+    }
+    val latest = new Reaction(-1, "issue") {
+      confused = 0
+    }
+
+    val diff = ReactionDiff(prev, latest)
+
+    println(diff.hasChanged)
+    diff.hasChanged shouldBe true
+  }
 }
