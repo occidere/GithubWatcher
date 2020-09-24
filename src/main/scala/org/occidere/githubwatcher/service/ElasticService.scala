@@ -77,5 +77,11 @@ object ElasticService extends GithubWatcherLogger {
     ).refreshImmediately
   }.await
 
+  def deleteAllReactions(reactions: List[Reaction]): Unit = client.execute {
+    bulk(
+      reactions.map(x => deleteById(GITHUB_REACTIONS, x.uniqueKey))
+    ).refreshImmediately
+  }
+
   def close(): Unit = client.close()
 }
