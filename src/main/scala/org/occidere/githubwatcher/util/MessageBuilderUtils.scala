@@ -1,6 +1,7 @@
 package org.occidere.githubwatcher.util
 
-import org.occidere.githubwatcher.vo.{FollowerDiff, RepositoryDiff}
+import org.occidere.githubwatcher.vo.{FollowerDiff, ReactionDiff, RepositoryDiff}
+import org.occidere.githubwatcher.util.ReactionEmojiConvertUtils._
 
 /**
  * @author occidere
@@ -34,6 +35,24 @@ object MessageBuilderUtils {
       else ""
     }
        |""".stripMargin.strip
+
+  def createReactionMessage(diff: ReactionDiff): String =
+    s"""[Reaction Changed]
+       |${diff.latestReaction.title}
+       |${diff.latestReaction.body}
+       |
+       |${
+      (if (diff.thumbUpDelta == 0) "" else s"${getEmoji("thumbUp")} ${diff.prevReaction.thumbUp} -> ${diff.latestReaction.thumbUp}\n") +
+        (if (diff.laughDelta == 0) "" else s"${getEmoji("laugh")} ${diff.prevReaction.laugh} -> ${diff.latestReaction.laugh}\n") +
+        (if (diff.heartDelta == 0) "" else s"${getEmoji("heart")} ${diff.prevReaction.heart} -> ${diff.latestReaction.heart}\n") +
+        (if (diff.hoorayDelta == 0) "" else s"${getEmoji("hooray")} ${diff.prevReaction.hooray} -> ${diff.latestReaction.hooray}\n") +
+        (if (diff.rocketDelta == 0) "" else s"${getEmoji("rocket")} ${diff.prevReaction.rocket} -> ${diff.latestReaction.rocket}\n") +
+        (if (diff.eyesDelta == 0) "" else s"${getEmoji("eyes")} ${diff.prevReaction.eyes} -> ${diff.latestReaction.eyes}\n") +
+        (if (diff.thumbDownDelta == 0) "" else s"${getEmoji("thumbDown")} ${diff.prevReaction.thumbDown} -> ${diff.latestReaction.thumbDown}\n") +
+        (if (diff.confusedDelta == 0) "" else s"${getEmoji("confused")} ${diff.prevReaction.confused} -> ${diff.latestReaction.confused}\n")
+    }
+       |${diff.latestReaction.htmlUrl}
+       |""".stripMargin
 
   private def prettyLoginList(logins: List[String], indent: Int = 2): String = {
     val prefix = " ".repeat(Math.max(0, indent)) + "-"

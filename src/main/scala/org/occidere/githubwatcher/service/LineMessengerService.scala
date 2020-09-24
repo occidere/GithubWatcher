@@ -5,8 +5,8 @@ import com.linecorp.bot.model.PushMessage
 import com.linecorp.bot.model.message.TextMessage
 import com.linecorp.bot.model.response.BotApiResponse
 import org.occidere.githubwatcher.logger.GithubWatcherLogger
-import org.occidere.githubwatcher.util.MessageBuilderUtils
-import org.occidere.githubwatcher.vo.{FollowerDiff, RepositoryDiff}
+import org.occidere.githubwatcher.util.MessageBuilderUtils._
+import org.occidere.githubwatcher.vo.{FollowerDiff, ReactionDiff, RepositoryDiff}
 
 /**
  * @author occidere
@@ -20,9 +20,11 @@ object LineMessengerService extends GithubWatcherLogger {
     .builder(s"${sys.env.getOrElse("gw_line_channel_token", "")}")
     .build()
 
-  def sendFollowerMessage(diff: FollowerDiff): Unit = sendMessageIfExist(MessageBuilderUtils.createFollowerMessage(diff))
+  def sendFollowerMessage(diff: FollowerDiff): Unit = sendMessageIfExist(createFollowerMessage(diff))
 
-  def sendRepositoryMessage(repositoryDiff: RepositoryDiff): Unit = sendMessageIfExist(MessageBuilderUtils.createRepositoryMessage(repositoryDiff))
+  def sendRepositoryMessage(diff: RepositoryDiff): Unit = sendMessageIfExist(createRepositoryMessage(diff))
+
+  def sendReactionMessage(diff: ReactionDiff): Unit = sendMessageIfExist(createReactionMessage(diff))
 
   private def sendMessageIfExist(msg: String): Unit = if (msg.nonEmpty) {
     val resp: BotApiResponse = lineMessagingClient.pushMessage(new PushMessage(BOT_ID, new TextMessage(msg))).get()
