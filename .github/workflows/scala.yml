@@ -63,7 +63,7 @@ jobs:
         env:
           gw_user_id: 'occidere'
           gw_es_endpoint: 'localhost:9200'
-          gw_tasks: 'followerWatchTask,repositoryWatchTask,reactionWatchTask'
+          gw_tasks: 'unsupportedTestTask,followerWatchTask,repositoryWatchTask,reactionWatchTask'
           gw_line_bot_id: ${{ secrets.GW_LINE_BOT_ID }}
           gw_line_channel_token: ${{ secrets.GW_LINE_CHANNEL_TOKEN }}
           gw_github_api_token: ${{ secrets.GW_GITHUB_API_TOKEN }}
