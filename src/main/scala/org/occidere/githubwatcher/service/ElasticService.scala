@@ -42,45 +42,37 @@ object ElasticService extends GithubWatcherLogger {
   }.await
 
   def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = Try(
-    SearchIterator.hits(client,
-      search(GITHUB_REPOS)
-        .bool(boolQuery().filter(query(s"ownerLogin.keyword:$ownerLogin")))
-        .keepAlive("1m")
-        .size(100))(Duration(5, MINUTES))
-      .map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Repository])).toList
+    scrollFilterSearch(GITHUB_REPOS, s"ownerLogin.keyword:$ownerLogin", classOf[Repository])
   ).getOrElse(List())
 
-  def saveAllRepos(repos: Iterable[Repository]): Unit = client.execute {
-    bulk(repos
-      .map(MAPPER.convertValue(_, classOf[Map[String, Any]]))
-      .map(repoMap => indexInto(GITHUB_REPOS)
-        .id(repoMap("id").toString)
-        .fields(repoMap))
-    ).refreshImmediately
-  }.await
+  def saveAllRepos(repos: Iterable[Repository]): Unit = bulkIndex(GITHUB_REPOS, "id", repos)
 
   def deleteAllReposById(ids: Iterable[String]): Unit = client.execute(bulk(ids.map(deleteById(GITHUB_REPOS, _))).refreshImmediately).await
 
   def findAllReactionsByLogin(login: String): List[Reaction] = Try(
-    SearchIterator.hits(client,
-      search(GITHUB_REACTIONS)
-        .bool(boolQuery().filter(query(s"login.keyword:$login"))) // TODO: Deduplicate scroll search function
-        .keepAlive("1m")
-        .size(100))(Duration(5, MINUTES))
-      .map(src => MAPPER.convertValue(src.sourceAsMap, classOf[Reaction])).toList
+    scrollFilterSearch(GITHUB_REACTIONS, s"login.keyword:$login", classOf[Reaction])
   ).getOrElse(List())
 
-  def saveAllReactions(reactions: Iterable[Reaction]): Unit = client.execute {
-    bulk(reactions
-      .map(MAPPER.convertValue(_, classOf[Map[String, Any]]))
-      .map(reactionMap => indexInto(GITHUB_REACTIONS)
-        .id(reactionMap("uniqueKey").toString)
-        .fields(reactionMap))
-    ).refreshImmediately
-  }.await
+  def saveAllReactions(reactions: Iterable[Reaction]): Unit = bulkIndex(GITHUB_REACTIONS, "uniqueKey", reactions)
 
   def deleteAllReactionsByUniqueKeys(uniqueKeys: Iterable[String]): Unit =
     client.execute(bulk(uniqueKeys.map(deleteById(GITHUB_REACTIONS, _))).refreshImmediately).await
 
   def close(): Unit = client.close()
+
+  private def scrollFilterSearch[T](index: String, queryString: String, dataType: Class[T]): List[T] = SearchIterator.hits(client,
+    search(index)
+      .bool(boolQuery().filter(query(queryString)))
+      .keepAlive("1m")
+      .size(100))(Duration(5, MINUTES))
+    .map(src => MAPPER.convertValue(src.sourceAsMap, dataType)).toList
+
+  private def bulkIndex[T](index: String, idFieldName: String, data: Iterable[T]): Unit = client.execute {
+    bulk(data
+      .map(MAPPER.convertValue(_, classOf[Map[String, Any]]))
+      .map(dataMap => indexInto(index)
+        .id(dataMap(idFieldName).toString)
+        .fields(dataMap))
+    ).refreshImmediately
+  }.await
 }
