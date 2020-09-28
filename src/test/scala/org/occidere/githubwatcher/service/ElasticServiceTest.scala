@@ -64,6 +64,23 @@ class ElasticServiceTest extends AnyFlatSpec with should.Matchers {
     println(repos)
   }
 
+  "deleteAllReposByIds" should "delete 2 repo" in {
+    val repos = List(
+      new Repository("20200928000001", "deleteAllReposByIdsTestRepo1", "테스트") {
+        ownerLogin = "deleteAllReposByIdsTest"
+      }, new Repository("20200928000002", "deleteAllReposByIdsTestRepo1", "테스트") {
+        ownerLogin = "deleteAllReposByIdsTest"
+      }
+    )
+    elasticService.saveAllRepos(repos)
+
+    elasticService.deleteAllReposById(repos.map(_.id))
+
+    val resp = elasticService.findAllReposByOwnerLogin("deleteAllReposByIdsTest")
+    println(s"resp=$resp")
+    resp.size shouldBe 0
+  }
+
   "fineAllReactionsByLogin with not exist user" should "return empty list" in {
     val reactions: List[Reaction] = elasticService.findAllReactionsByLogin("!@#$")
 

@@ -57,7 +57,9 @@ object ElasticService extends GithubWatcherLogger {
         .id(repoMap("id").toString)
         .fields(repoMap))
     ).refreshImmediately
-  }.await // TODO: Add bulk delete
+  }.await
+
+  def deleteAllReposById(ids: Iterable[String]): Unit = client.execute(bulk(ids.map(deleteById(GITHUB_REPOS, _))).refreshImmediately).await
 
   def findAllReactionsByLogin(login: String): List[Reaction] = Try(
     SearchIterator.hits(client,
@@ -78,7 +80,7 @@ object ElasticService extends GithubWatcherLogger {
   }.await
 
   def deleteAllReactionsByUniqueKeys(uniqueKeys: Iterable[String]): Unit =
-    client.execute(bulk(uniqueKeys.map(deleteById(GITHUB_REACTIONS, _))).refreshImmediately)
+    client.execute(bulk(uniqueKeys.map(deleteById(GITHUB_REACTIONS, _))).refreshImmediately).await
 
   def close(): Unit = client.close()
 }

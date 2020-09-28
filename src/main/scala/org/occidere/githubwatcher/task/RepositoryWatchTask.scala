@@ -48,6 +48,8 @@ object RepositoryWatchTask extends Task with GithubWatcherLogger {
       }
     })
 
+    val idsOfDeletedRepos = latestRepos.map(_.id).toSet -- prevRepos.keySet
+    if (idsOfDeletedRepos.nonEmpty) ElasticService.deleteAllReposById(idsOfDeletedRepos)
     if (changedLatestRepos.nonEmpty) ElasticService.saveAllRepos(changedLatestRepos)
   }
 }
