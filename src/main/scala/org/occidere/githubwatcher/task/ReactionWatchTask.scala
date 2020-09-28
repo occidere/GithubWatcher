@@ -41,7 +41,8 @@ object ReactionWatchTask extends Task with GithubWatcherLogger {
     })
 
     // Update DB to latest data
-    ElasticService.deleteAllReactionsByUniqueKeys(prevReactions.keySet -- latestReactions.map(_.uniqueKey)) // Delete reactions
-    ElasticService.saveAllReactions(changedReactions) // Upsert reactions
+    val uniqueKeysOfDeletedReactions = prevReactions.keySet -- latestReactions.map(_.uniqueKey)
+    if (uniqueKeysOfDeletedReactions.nonEmpty) ElasticService.deleteAllReactionsByUniqueKeys(uniqueKeysOfDeletedReactions) // Delete reactions
+    if (changedReactions.nonEmpty) ElasticService.saveAllReactions(changedReactions) // Upsert reactions
   }
 }
