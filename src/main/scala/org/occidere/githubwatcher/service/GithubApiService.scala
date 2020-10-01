@@ -25,7 +25,7 @@ object GithubApiService {
   def getReactionsOfIssuesCreatedByUser: List[Reaction] = getBodies("issues", Map("per_page" -> "100", "filter" -> "created", "state" -> "all"))
     .map(x => MAPPER.convertValue(x + ("originDataType" -> ISSUE.toString), classOf[Reaction]))
 
-  def getReactionsOfCommentsInRepository(login: String, repo: String): List[Reaction] = getBodies(s"repos/$login/$repo/issues/comments")
+  def getReactionsOfCommentsInRepository(repoOwnerLogin: String, repo: String)(login: String): List[Reaction] = getBodies(s"repos/$repoOwnerLogin/$repo/issues/comments")
     .map(x => MAPPER.convertValue(x + ("originDataType" -> COMMENT.toString), classOf[Reaction]))
     .filter(_.login == login)
 
