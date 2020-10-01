@@ -65,7 +65,7 @@ class GithubApiServiceTest extends AnyFlatSpec with PrivateMethodTester with sho
   }
 
   "getReactionsOfCommentsInRepository" should "return nonNull List of Reactions" in {
-    val reactions = githubApiService.getReactionsOfCommentsInRepository("YoungStudyShopping", "leetcode_study")
+    val reactions = githubApiService.getReactionsOfCommentsInRepository("YoungStudyShopping", "leetcode_study")("occidere")
 
     println(reactions.size)
     println(reactions.find(_.totalCount > 0).orNull)

@@ -22,7 +22,7 @@ object ReactionWatchTask extends Task with GithubWatcherLogger {
 
     // Merge issues' reactions with fetched reactions from Repo
     val latestReactions = reactionsFromIssues.distinctBy(x => s"${x.repoOwnerLogin}/${x.repoName}".hashCode)
-      .flatMap(x => GithubApiService.getReactionsOfCommentsInRepository(x.repoOwnerLogin, x.repoName)) ++ reactionsFromIssues
+      .flatMap(x => GithubApiService.getReactionsOfCommentsInRepository(x.repoOwnerLogin, x.repoName)(userId)) ++ reactionsFromIssues
 
     // Data from DB (Elasticsearch)
     val prevReactions = ElasticService.findAllReactionsByLogin(userId).map(x => x.uniqueKey -> x).toMap
