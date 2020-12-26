@@ -40,7 +40,10 @@ object ElasticService extends GithubWatcherLogger {
       client.execute {
         search(GITHUB_USERS).bool(boolQuery().filter(query(s"login.keyword:$login"))).limit(1)
       }.await.result.hits.hits.head.sourceAsMap, classOf[User])
-  ).get
+  ).getOrElse {
+    logger.error("findUserByLogin failed!")
+    User()
+  }
 
   def saveUser(user: User): Unit = client.execute {
     indexInto(GITHUB_USERS)
@@ -51,7 +54,10 @@ object ElasticService extends GithubWatcherLogger {
 
   def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = Try(
     scrollFilterSearch(GITHUB_REPOS, s"ownerLogin.keyword:$ownerLogin", classOf[Repository])
-  ).get
+  ).getOrElse {
+    logger.error("findAllReposByOwnerLogin failed!")
+    List()
+  }
 
   def saveAllRepos(repos: Iterable[Repository]): Unit = bulkIndex(GITHUB_REPOS, "id", repos)
 
@@ -59,7 +65,10 @@ object ElasticService extends GithubWatcherLogger {
 
   def findAllReactionsByLogin(login: String): List[Reaction] = Try(
     scrollFilterSearch(GITHUB_REACTIONS, s"login.keyword:$login", classOf[Reaction])
-  ).get
+  ).getOrElse {
+    logger.error("findAllReactionsByLogin failed!")
+    List()
+  }
 
   def saveAllReactions(reactions: Iterable[Reaction]): Unit = bulkIndex(GITHUB_REACTIONS, "uniqueKey", reactions)
 
