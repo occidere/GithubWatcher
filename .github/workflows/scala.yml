@@ -57,7 +57,7 @@ jobs:
         run: curl -sS -XGET localhost:9200
 
       - name: Set env
-        run: echo ::set-env name=CI_BRANCH::$(git rev-parse --abbrev-ref HEAD)
+        run: echo "CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
 
       - name: Run tests with coverage
         env:
