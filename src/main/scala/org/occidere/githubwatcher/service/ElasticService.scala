@@ -2,9 +2,9 @@ package org.occidere.githubwatcher.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.sksamuel.elastic4s.http.JavaClient
 import com.sksamuel.elastic4s.requests.searches.SearchIterator
 import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties}
+import org.apache.http.client.config.RequestConfig
 import org.occidere.githubwatcher.logger.GithubWatcherLogger
 import org.occidere.githubwatcher.vo._
 
@@ -18,8 +18,16 @@ import scala.util.Try
  * @since 2020-08-31
  */
 object ElasticService extends GithubWatcherLogger {
-  private lazy val client = ElasticClient(JavaClient(ElasticProperties(s"http://${sys.env.getOrElse("gw_es_endpoint", "localhost:9200")}")))
   private lazy val MAPPER = new ObjectMapper().registerModule(DefaultScalaModule)
+  private lazy val client = ElasticClient(
+    com.sksamuel.elastic4s.http.JavaClient(
+      ElasticProperties(s"http://${sys.env.getOrElse("gw_es_endpoint", "localhost:9200")}"),
+      (requestConfigBuilder: RequestConfig.Builder) => requestConfigBuilder
+        .setSocketTimeout(60000)
+        .setConnectTimeout(10000)
+        .setConnectionRequestTimeout(10000)
+    )
+  )
 
   private val GITHUB_USERS = "github-users"
   private val GITHUB_REPOS = "github-repos"
@@ -32,7 +40,7 @@ object ElasticService extends GithubWatcherLogger {
       client.execute {
         search(GITHUB_USERS).bool(boolQuery().filter(query(s"login.keyword:$login"))).limit(1)
       }.await.result.hits.hits.head.sourceAsMap, classOf[User])
-  ).getOrElse(User())
+  ).get
 
   def saveUser(user: User): Unit = client.execute {
     indexInto(GITHUB_USERS)
@@ -43,7 +51,7 @@ object ElasticService extends GithubWatcherLogger {
 
   def findAllReposByOwnerLogin(ownerLogin: String): List[Repository] = Try(
     scrollFilterSearch(GITHUB_REPOS, s"ownerLogin.keyword:$ownerLogin", classOf[Repository])
-  ).getOrElse(List())
+  ).get
 
   def saveAllRepos(repos: Iterable[Repository]): Unit = bulkIndex(GITHUB_REPOS, "id", repos)
 
@@ -51,7 +59,7 @@ object ElasticService extends GithubWatcherLogger {
 
   def findAllReactionsByLogin(login: String): List[Reaction] = Try(
     scrollFilterSearch(GITHUB_REACTIONS, s"login.keyword:$login", classOf[Reaction])
-  ).getOrElse(List())
+  ).get
 
   def saveAllReactions(reactions: Iterable[Reaction]): Unit = bulkIndex(GITHUB_REACTIONS, "uniqueKey", reactions)
 
