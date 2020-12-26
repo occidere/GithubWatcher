@@ -2,7 +2,7 @@ name := "GithubWatcher"
 
 version := "0.1"
 
-scalaVersion := "2.13.3"
+scalaVersion := "2.13.4"
 
 test in assembly := {}
 mainClass in assembly := Some("org.occidere.githubwatcher.GithubWatcher")
@@ -22,9 +22,9 @@ coverageFailOnMinimum := false
 coverageEnabled.in(Test, test) := true
 coverageEnabled.in(Compile, compile) := false
 
-val elastic4sVersion = "7.9.0"
-val jacksonVersion = "2.11.2"
-val lineBotVersion = "4.0.0"
+val elastic4sVersion = "7.10.0"
+val jacksonVersion = "2.12.0"
+val lineBotVersion = "4.3.0"
 
 libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-api" % "1.7.30",
