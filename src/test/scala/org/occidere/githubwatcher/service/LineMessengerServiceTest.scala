@@ -10,7 +10,7 @@ import scala.util.{Success, Try}
 
 /**
  * @author occidere
- * @Blog: https://occidere.blog.me
+ * @Blog: https://blog.naver.com/occidere
  * @Github: https://github.com/occidere
  * @since 2020-08-31
  */
@@ -45,7 +45,7 @@ class LineMessengerServiceTest extends AnyFlatSpec with PrivateMethodTester with
   }
 
   "sendMessageIfExist with token" should "be succeeded" in {
-    Try(LineMessengerService invokePrivate PrivateMethod('sendMessageIfExist)("test")) match {
+    Try(LineMessengerService invokePrivate PrivateMethod(Symbol("sendMessageIfExist"))("test")) match {
       case Success(_) => println("Test message send success")
     }
   }
