@@ -65,7 +65,7 @@ sbt clean assembly
 
 ### Run jar
 ```bash
-export gw_tasks=followerWatchTask,repositoryWatchTask # tasks
+export gw_tasks=followerWatchTask,repositoryWatchTask,reactionWatchTask # tasks
 export gw_user_id=${YOUR_GITHUB_USER_ID}
 export gw_es_endpoint=${YOUR_ES_ENDPOINT} # default: localhost:9200
 export gw_line_bot_id=${YOUR_LINE_BOT_ID}
