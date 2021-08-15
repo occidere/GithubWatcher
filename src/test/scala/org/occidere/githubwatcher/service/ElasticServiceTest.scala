@@ -1,12 +1,13 @@
 package org.occidere.githubwatcher.service
 
 import org.occidere.githubwatcher.vo.{Reaction, Repository, User}
+import org.scalatest.Ignore
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers._
 
 /**
  * @author occidere
- * @Blog: https://occidere.blog.me
+ * @Blog: https://blog.naver.com/occidere
  * @Github: https://github.com/occidere
  * @since 2020-08-31
  */

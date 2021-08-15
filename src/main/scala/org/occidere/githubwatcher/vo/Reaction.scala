@@ -3,8 +3,8 @@ package org.occidere.githubwatcher.vo
 import com.fasterxml.jackson.annotation.{JsonIgnoreProperties, JsonInclude, JsonProperty}
 
 /**
- * @login occidere
- * @Blog: https://occidere.blog.me
+ * @author occidere
+ * @Blog: https://blog.naver.com/occidere
  * @Github: https://github.com/occidere
  * @since 2020-09-23
  */

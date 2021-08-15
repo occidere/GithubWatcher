@@ -8,7 +8,7 @@ import scala.util.{Failure, Success, Try}
 
 /**
  * @author occidere
- * @Blog: https://occidere.blog.me
+ * @Blog: https://blog.naver.com/occidere
  * @Github: https://github.com/occidere
  * @since 2020-08-31
  */
