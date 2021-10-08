@@ -14,7 +14,7 @@ import scala.util.{Failure, Success, Try}
  * @since 2020-09-23
  */
 object ReactionWatchTask extends Task with GithubWatcherLogger {
-  override def run(userId: String): Unit = {
+  override def run(userId: String, skipAlert: Boolean = false): Unit = {
     logger.info(s"User ID: $userId")
 
     // Fetch reactions from Issues
@@ -30,7 +30,7 @@ object ReactionWatchTask extends Task with GithubWatcherLogger {
     // Diff & Send line message
     val changedReactions = latestReactions.filter(latest => {
       val diff = ReactionDiff(prevReactions.getOrElse(latest.uniqueKey, copyReactionWithoutCounts(latest)), latest)
-      Try(if (diff.hasChanged) LineMessengerService.sendReactionMessage(diff)) match {
+      Try(if (diff.hasChanged && !skipAlert) LineMessengerService.sendReactionMessage(diff)) match {
         case Failure(e) =>
           logger.error(s"${latest.uniqueKey} process failed (htmlUrl: ${latest.htmlUrl})", e)
           false

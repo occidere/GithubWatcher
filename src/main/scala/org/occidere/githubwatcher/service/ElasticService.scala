@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.sksamuel.elastic4s.requests.searches.SearchIterator
 import com.sksamuel.elastic4s.{ElasticClient, ElasticProperties}
+import org.apache.http.auth.{AuthScope, UsernamePasswordCredentials}
 import org.apache.http.client.config.RequestConfig
+import org.apache.http.impl.client.BasicCredentialsProvider
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.occidere.githubwatcher.logger.GithubWatcherLogger
 import org.occidere.githubwatcher.vo._
 
@@ -19,13 +22,23 @@ import scala.util.Try
  */
 object ElasticService extends GithubWatcherLogger {
   private lazy val MAPPER = new ObjectMapper().registerModule(DefaultScalaModule)
+
+  private val esUsername = sys.env.get("gw_es_username")
+  private val esPassword = sys.env.get("gw_es_password")
+
   private lazy val client = ElasticClient(
     com.sksamuel.elastic4s.http.JavaClient(
       ElasticProperties(s"http://${sys.env.getOrElse("gw_es_endpoint", "localhost:9200")}"),
       (requestConfigBuilder: RequestConfig.Builder) => requestConfigBuilder
         .setSocketTimeout(60000)
         .setConnectTimeout(10000)
-        .setConnectionRequestTimeout(10000)
+        .setConnectionRequestTimeout(10000),
+      // Set credentials if exist
+      (httpClientBuilder: HttpAsyncClientBuilder) => httpClientBuilder.setDefaultCredentialsProvider(
+        new BasicCredentialsProvider() {
+          if (hasCredentials) setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(esUsername.get, esPassword.get))
+        }
+      )
     )
   )
 
@@ -76,6 +89,8 @@ object ElasticService extends GithubWatcherLogger {
     client.execute(bulk(uniqueKeys.map(deleteById(GITHUB_REACTIONS, _))).refreshImmediately).await
 
   def close(): Unit = client.close()
+
+  private def hasCredentials = esUsername.isDefined && esPassword.isDefined;
 
   private def scrollFilterSearch[T](index: String, queryString: String, dataType: Class[T]): List[T] = SearchIterator.hits(client,
     search(index)

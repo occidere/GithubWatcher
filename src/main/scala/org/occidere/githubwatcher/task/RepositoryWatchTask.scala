@@ -14,7 +14,7 @@ import scala.util.{Failure, Success, Try}
  */
 object RepositoryWatchTask extends Task with GithubWatcherLogger {
 
-  override def run(userId: String): Unit = {
+  override def run(userId: String, skipAlert: Boolean = false): Unit = {
     logger.info(s"User ID: $userId")
 
     // Latest repos from API
@@ -38,7 +38,7 @@ object RepositoryWatchTask extends Task with GithubWatcherLogger {
       logger.info(s"Repo: ${diff.repoName} (changed: ${diff.hasChanged})")
 
       // Send message
-      Try(if (diff.hasChanged) LineMessengerService.sendRepositoryMessage(diff)) match {
+      Try(if (diff.hasChanged && !skipAlert) LineMessengerService.sendRepositoryMessage(diff)) match {
         case Failure(exception) =>
           logger.error(s"${latest.name} process failed", exception)
           false

@@ -68,6 +68,8 @@ sbt clean assembly
 export gw_tasks=followerWatchTask,repositoryWatchTask,reactionWatchTask # tasks
 export gw_user_id=${YOUR_GITHUB_USER_ID}
 export gw_es_endpoint=${YOUR_ES_ENDPOINT} # default: localhost:9200
+export gw_es_username=${YOUR_ES_USERNAME) # Optional
+export gw_es_password=${YOUR_ES_PASSWORD} # Optional
 export gw_line_bot_id=${YOUR_LINE_BOT_ID}
 export gw_line_channel_token=${YOUR_LINE_CHANNEL_TOKEN}
 export gw_github_api_token=${YOUR_GITHUB_API_TOKEN}

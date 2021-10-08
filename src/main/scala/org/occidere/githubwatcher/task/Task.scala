@@ -7,5 +7,5 @@ package org.occidere.githubwatcher.task
  * @since 2020-09-22
  */
 trait Task {
-  def run(userId: String): Unit
+  def run(userId: String, skipAlert: Boolean = false): Unit
 }

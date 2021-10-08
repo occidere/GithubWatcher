@@ -12,7 +12,7 @@ import org.occidere.githubwatcher.vo.FollowerDiff
  */
 object FollowerWatchTask extends Task with GithubWatcherLogger {
 
-  override def run(userId: String): Unit = {
+  override def run(userId: String, skipAlert: Boolean = false): Unit = {
     logger.info(s"User ID: $userId")
 
     // Data from GitHub API
@@ -31,7 +31,7 @@ object FollowerWatchTask extends Task with GithubWatcherLogger {
     logger.info(s"Not changed followers: ${diff.notChangedFollowerLogins.size}")
 
     // Send line message if follower changed
-    if (diff.hasChanged) LineMessengerService.sendFollowerMessage(diff)
+    if (diff.hasChanged && !skipAlert) LineMessengerService.sendFollowerMessage(diff)
 
     // Update DB to latest data including repos
     latestUser.followerLogins = diff.newFollowerLogins ++ diff.notChangedFollowerLogins
