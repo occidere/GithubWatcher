@@ -67,6 +67,7 @@ jobs:
           gw_line_bot_id: ${{ secrets.GW_LINE_BOT_ID }}
           gw_line_channel_token: ${{ secrets.GW_LINE_CHANNEL_TOKEN }}
           gw_github_api_token: ${{ secrets.GW_GITHUB_API_TOKEN }}
+          gw_skip_alert: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: sbt coverage test coverageReport coveralls
 
